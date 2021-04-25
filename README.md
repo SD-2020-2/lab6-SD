@@ -18,20 +18,21 @@ Arquitectura
 
 ## Enunciado
 
-Hacer una simulación del algoritmo de bully leader
+1. Construir un sistema distribuido que permite generar una obra de arte en pixel art.
 
-1. **Hay varios servidores y cada un tiene su interfaz de consulta Web.**
+2. Todas las instancias tiene un copia de de la obra y se puede consultar en cada instancia.
 
-2. **Se debe tener la lista de servidores cada uno con un id y saber quien es el lider. Si se agrega un nuevo server este debe quedar registrado (crear nueva instancia).**
-3. **El primer nodo que se conecta es el lider.** El lider debe tener un boton para detener la instancia.
+3. Para modificar la obra de arte se tiene que tener la mitad más uno de los votos de la red, para eso se hace un PoW.
 
-4. **Los servidores deben hacer un latido al lider cada cierto tiempo aleatorio, el primero que detecta ese evento debe iniciar la elección.**
+A. Se solicita a las instancias una palabra (de una lista).
 
-5. **Se debe informar a los demás que se va a cambiar el lider para que suspendan los latidos.**
+B. Se reunen las palabras y se escoge la que más tenga votos (si hay empate o no hay consenso se vuelve a preguntar).
 
-6. **Se ejecuta el algoritmo y cuando se termina se notifica el cambio de lider.**
+C. Se registra en tareas pendientes(todos tiene copia de esa lista) quien va a hacer la tarea y cual es la tarea(escribir la palabra en un archivo 100000 veces en nuevas lineas) y el pixel que se quiere modificar y el color.
 
-7. Se deben registrar los logs de todas las peticiones que se hagan en el sistema y sus respuestas.
+D. Cuando se cumple el trabajo se tiene que enviar a todos los nodos y estos validan que se haya hecho correctamente. Y si la mitad más uno aprueba entonces se registra el pixel(con un codigo que sea la suma de numeros aletaroios de 0 a 100 generados por cada participante). Cada participante guarda esos numeros.
+
+4. Se puede validar la obra de arte, pedir un certificado a la instancia y la envian al nodo lider y el hace un consenso para verificar si la imagen es real.
 
 ## Usar este proyecto
 
@@ -65,6 +66,11 @@ Se crea un contenedor por cada instancia, por ejemplo:
   - http://172.17.0.2:8080
 - instance2:
   - http://172.17.0.3:8080
+
+Y el servidor coordinador funciona en la propia maquina:
+
+- serverCoordinador:
+  - http://127.0.0.1:8080
 
 ## Dependencias
 
