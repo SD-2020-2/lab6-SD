@@ -24,35 +24,6 @@ const getInstancesIPs = () => {
 	return buildArrayFromString(instancePorts);
 };
 
-/**
- * Crea una nueva instancia
- */
-const createInstance = () => {
-	let result = execSync(`bash ${__dirname}/../../create-instance.sh`).toString();
-	return result;
-};
-
-const checkInstancesStatus = () => {
-	let string = execSync(`bash ${__dirname}/check-status.sh`).toString();
-	let array = buildArrayFromString(string);
-	array.pop();
-	let instancesStatus = [];
-	console.log(array);
-	for (const instance of array) {
-		let ins = instance.split('-');
-		//	console.log(ins);
-		instancesStatus.push({
-			name: ins[0],
-			status: ins[1],
-			port: '8080',
-		});
-	}
-
-	return instancesStatus;
-};
-
 module.exports = {
 	getInstancesIPs,
-	createInstance,
-	checkInstancesStatus,
 };
