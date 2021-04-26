@@ -98,5 +98,5 @@ function showVotes() {
 }
 
 server.listen(port, () => {
-	logger.info(`Instance corriendo y escuchando en el puerto ${port}`);
+	logger.info(`Middleware listening on port ${port}`);
 });

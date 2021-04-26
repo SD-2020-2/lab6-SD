@@ -1,4 +1,4 @@
-getserverinfo();
+// getserverinfo();
 // tabla
 /*function getserverinfo() {
 	fetch('/instancestatus')

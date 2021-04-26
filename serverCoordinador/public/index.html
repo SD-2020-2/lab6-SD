@@ -6,12 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Middleware Lab 5 SD</title>
+    <title>Server Coordinador Lab 6 SD</title>
 </head>
 
 <body>
-    <h1>Middleware</h1>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <h1>Server Coordinador</h1>
     <div class="contenedorMonitoreo">
         <div id="tablaInfo" class="tablaInfo">
             <h1 class="titulo2">Estado de las instancias</h1>
@@ -28,12 +27,17 @@
                     <td>{{server.status}}</td>
                     <td>{{server.port}}</td>
                 </tr>
-
             </table>
 
+            <div class="tab">
+                <button class="tablinks" onclick="loadLogs(event, 'instance1')">Instance1</button>
+                <button class="tablinks" onclick="loadLogs(event, 'instance2')">Instance2</button>
+                <button class="tablinks" onclick="loadLogs(event, 'instance3')">Instance3</button>
+            </div>
         </div>
 
-
+        <script src="comunication.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 </body>
 
 </html>
