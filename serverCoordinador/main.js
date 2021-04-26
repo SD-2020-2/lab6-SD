@@ -3,6 +3,7 @@ const app = express();
 const axios = require('axios');
 const port = 3000;
 const bodyParser = require('body-parser');
+const logger = require('./logs/logger');
 var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
@@ -97,5 +98,5 @@ function showVotes() {
 }
 
 server.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
+	logger.info(`Instance corriendo y escuchando en el puerto ${port}`);
 });

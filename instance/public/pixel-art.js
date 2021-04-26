@@ -8,8 +8,8 @@ const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 
 // Numero de filas y de columnas
-const numCols = 15;
-const numRows = 15;
+const numCols = 5;
+const numRows = 5;
 
 // Cte para obtener el color del user
 const colorPicker = document.getElementById('colorPicker');
