@@ -1,0 +1,12 @@
+body {
+    text-align: center;
+}
+
+.block-pixel-art {
+    cursor: not-allowed;
+    pointer-events: none
+}
+
+#pixelart {
+    border: 2px solid black;
+}
