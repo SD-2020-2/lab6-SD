@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const axios = require('axios');
 const port = 8080;
+const logger = require('./logs/logger');
+
+app.use(express.static('public'));
+
 const bodyParser = require('body-parser');
 let listaPalabras = ['Amazona', 'Progenitor', 'Cohete', 'Verdadero', 'Lata', 'Apilar', 'Dinero', 'Vecina', 'Documentos', 'Circuitos'];
 let listaTareasPendientes = [];
@@ -29,5 +33,5 @@ function getRandomWord() {
 }
 
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
+	logger.info(`Instance corriendo y escuchando en el puerto ${port}`);
 });
