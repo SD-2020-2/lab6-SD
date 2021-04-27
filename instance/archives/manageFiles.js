@@ -43,10 +43,32 @@ exports.escribirArchivo = function(palabra , veces){
 }
 
 exports.escribirMatriz = function (matriz){
+
     for(let i =0;i < matriz.length; i++){
         for(let i =0;i < matriz.length; i++){
-        
+            matriz[i][j];
         }
     }
 }
 
+exports.enviarPruebaCarga = function (IP , Puerto , path) {
+    console.log('Se esta enviando la prueba de carga al lider...');
+    var stream = fs.createReadStream(NOMBRE_ARCHIVO);
+    var data = new FormData();
+    data.append('file', stream);/*Son parametros Clave Valor 
+    DEBEN SER LOS MISMOS EN EL SERVIDOR DE DESTINO
+    */
+    var req = request(
+        {
+            host: IP,
+            port: Puerto,
+            path: path,
+            method: 'POST',
+            headers: data.getHeaders(),
+        },
+        response => {
+            console.log(response.statusCode);
+        }
+    );
+    data.pipe(req);
+}
