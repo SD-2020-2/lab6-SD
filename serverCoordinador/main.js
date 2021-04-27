@@ -9,6 +9,7 @@ let listaServidores = [];
 let listaPalabras = [];
 let listaVotos = [0, 0, 0];
 var serverReq;
+var isFinish = false;
 let listaTareasPendientes = [];
 var isTime = false;
 var count = 0;
@@ -21,11 +22,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(require('./routes/router'));
 app.use(express.static('public'));
 
-app.post('/word', (req, res) => {
+app.get('/word', (req, res) => {
 	for (let i = 0; i < listaServidores.length; i++) {
 		axios.get(`http://${listaServidores[i]}:8080/word`).then((response) => {
 			listaPalabras.push(response.data.wordV);
-			logger.info('Me llega la palabra: ' + response.data.wordV);
 		});
 	}
 	res.sendStatus(200);
@@ -46,27 +46,38 @@ app.get('/list', (req, res) => {
 	res.sendStatus(200);
 });
 
+function resolveAfter2Seconds() {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			axios
+				.get(`http://localhost:3000/list`)
+				.then((response) => {})
+				.catch((error) => {
+					console.log(error);
+				});
+			console.log('Redy');
+		}, 4000);
+	});
+}
+
+async function asyncCall() {
+	console.log('calling');
+	const result = await resolveAfter2Seconds();
+	console.log(result);
+	// expected output: "resolved"
+}
+
 app.post('/infopixels', async (req, res) => {
 	serverReq = req.body.ip;
 	logger.info(`la instancia ${serverReq} desea modificar el pixel en la pos x: ${req.body.x}, y:${req.body.y} y con un color ${req.body.color}`);
 	listaTareasPendientes.push('la instancia ' + req.body.ip + ' quiere modificar pixel');
 	axios
-		.post(`http://localhost:3000/word`) // => pide las palabras a todas las instancias
-		.then((response) => {
-			axios
-				.get(`http://localhost:3000/list`) // => envia la lista de palabras a todas las instancias
-				.then((response) => {})
-				.catch((error) => {
-					console.log(error);
-				});
-		})
+		.get(`http://localhost:3000/word`)
 		.then((response) => {})
 		.catch((error) => {
 			console.log(error);
 		});
-	if (isTime == true) {
-	}
-
+	asyncCall();
 	res.send('Ok');
 });
 
@@ -105,7 +116,7 @@ app.get('/task', (req, res) => {
 		}
 	}
 	var word = listaPalabras[Number(aux)];
-	console.log('La palabra que mas votos tuvo fue ' + word);
+	console.log('La palabra que mas votos tuvo fue ' + word + ' en la pos ' + aux);
 	var miObjeto = new Object();
 	miObjeto.word = word;
 	miObjeto.veces = 5000;
@@ -132,11 +143,12 @@ setTimeout(() => {
 		});
 }, 5000);
 
-setInterval(() => {
-	for (let i = 0; i < listaTareasPendientes.length; i++) {
-		console.log(listaTareasPendientes[i]);
-	}
-}, 5000);
+//setInterval(() => {
+//	for (let i = 0; i < listaTareasPendientes.length; i++) {
+//		console.log(listaTareasPendientes[i]);
+//		console.log(listaPalabras[i]);
+//	}
+//}, 5000);
 
 //Metodo encargado de mostrar la lista
 function showList() {
