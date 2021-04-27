@@ -8,6 +8,7 @@ var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
 let listaVotos = [0, 0, 0];
+var serverReq;
 let listaTareasPendientes = [];
 
 const executeScripts = require('./scripts/execute-scripts');
@@ -18,20 +19,49 @@ app.use(express.urlencoded({ extended: true }));
 app.use(require('./routes/router'));
 app.use(express.static('public'));
 
-app.get('/word', (req, res) => {
+app.post('/word', (req, res) => {
 	for (let i = 0; i < listaServidores.length; i++) {
-		console.log(i);
+		axios.get(`http://${listaServidores[i]}:8080/word`).then((response) => {
+			listaPalabras.push(response.data.wordV);
+			logger.info('Me llega la palabra: ' + response.data.wordV);
+		});
+	}
+	res.sendStatus(200);
+});
+
+app.get('/list', (req, res) => {
+	var miObjeto = new Object();
+	miObjeto.word1 = listaPalabras[0];
+	miObjeto.word2 = listaPalabras[1];
+	for (let i = 0; i < listaServidores.length; i++) {
 		axios
-			.get(`http://${listaServidores[i]}:8080/word`)
-			.then((response) => {
-				listaPalabras.push(response.data.wordV);
-				console.log('El tamaño de la lista de palabras es ' + listaPalabras.length);
-			})
+			.post(`http://${listaServidores[i]}:8080/listword`, miObjeto)
+			.then((response) => {})
 			.catch((error) => {
 				console.log(error);
 			});
 	}
-	console.log('El tamaño de la lista de votos es ' + listaVotos.length);
+	res.sendStatus(200);
+});
+
+app.post('/infopixels', async (req, res) => {
+	serverReq = req.body.ip;
+	logger.info(`la instancia ${serverReq} desea modificar el pixel en la pos x: ${req.body.x}, y:${req.body.y} y con un color ${req.body.color}`);
+	listaTareasPendientes.push('la instancia ' + req.body.ip + ' quiere modificar pixel');
+	axios
+		.post(`http://localhost:3000/word`)
+		.then((response) => {
+			axios
+				.get(`http://localhost:3000/list`)
+				.then((response) => {})
+				.catch((error) => {
+					console.log(error);
+				});
+		})
+		.then((response) => {})
+		.catch((error) => {
+			console.log(error);
+		});
 	res.send('Ok');
 });
 

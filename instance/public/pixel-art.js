@@ -18,8 +18,8 @@ const btnSendPixel = document.getElementById('sendpixel');
 btnSendPixel.addEventListener('click', sendPixel);
 
 // variables de posiciones x,y del ultimo pixel dibujado
-let x = 0;
-let y = 0;
+var x = 0;
+var y = 0;
 let selectedColor = '';
 
 /**
@@ -142,14 +142,11 @@ function sendPixel() {
 	let options = {
 		method: 'POST',
 		headers: { 'Content-type': 'application/json' },
-		body: pixelInfo,
+		body: JSON.stringify(pixelInfo),
 	};
 
 	console.log(pixelInfo);
-	// fetch('/pixel', options)
-	// 	.then((response) => console.log(response))
-	// 	.catch((error) => console.log(error));
-
+	fetch('/pixel', options);
 	alert('Pixel enviado para revision ...');
 
 	canvas.classList.add('block-pixel-art');
