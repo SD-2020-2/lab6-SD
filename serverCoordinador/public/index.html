@@ -28,16 +28,25 @@
                     <td>{{server.port}}</td>
                 </tr>
             </table>
-
-            <div class="tab">
-                <button class="tablinks" onclick="loadLogs(event, 'instance1')">Instance1</button>
-                <button class="tablinks" onclick="loadLogs(event, 'instance2')">Instance2</button>
-                <button class="tablinks" onclick="loadLogs(event, 'instance3')">Instance3</button>
-            </div>
         </div>
+    </div>
 
-        <script src="comunication.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <div id="root" class="container">
+        <tabs>
+            <tab name="Instance 1" :selected="true">
+                <tabla></tabla>
+            </tab>
+            <tab name="Instance 2">
+                <tabla></tabla>
+            </tab>
+            <tab name="Instance 3">
+                <tabla></tabla>
+            </tab>
+        </tabs>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="comunication.js"></script>
 </body>
 
 </html>

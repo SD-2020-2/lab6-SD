@@ -113,7 +113,7 @@ setTimeout(() => {
 
 //Metodo encargado de mostrar la lista
 function showList() {
-	console.log('lista de servidores');
+	console.log('Lista de instancias: ');
 	for (let i = 0; i < listaServidores.length; i++) {
 		console.log(listaServidores[i]);
 	}
@@ -126,6 +126,23 @@ function showVotes() {
 		console.log(listaVotos[i]);
 	}
 }
+
+/**
+ * Obtiene los logs la instancia especificada en instancenum (2,3,4)
+ */
+app.get('/logs/:instancenum', (req, res) => {
+	let ip = `172.17.0.${req.params.instancenum}`;
+	axios
+		.get(`http://${ip}:8080/logs`)
+		.then((logsArray) => {
+			logger.info(`Peticion de logs a instance ${ip}`);
+			res.send(logsArray.data);
+		})
+		.catch((error) => {
+			logger.error(`Al traer logs: ${error.message}`);
+			res.send([]);
+		});
+});
 
 server.listen(port, () => {
 	logger.info(`Middleware listening on port ${port}`);

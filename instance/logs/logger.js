@@ -7,7 +7,7 @@ const { combine } = format;
 const consoleFormat = combine(
 	format.colorize(),
 	format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-	format.printf((info) => `${info.level}: ${info.timestamp} - ${info.message}`)
+	format.printf((info) => `${info.level}: ${info.timestamp}: ${info.message}`)
 );
 
 /**
@@ -15,7 +15,7 @@ const consoleFormat = combine(
  */
 const fileFormat = combine(
 	format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-	format.printf((info) => `${info.level}: ${info.timestamp} - ${info.message}`)
+	format.printf((info) => `${info.level.toUpperCase()}:--${info.timestamp}--${info.message}`)
 );
 
 /**
