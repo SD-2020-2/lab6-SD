@@ -5,6 +5,8 @@ const port = 8080;
 const logger = require('./logs/logger');
 const { getMyOwnIP } = require('./scripts/scripts');
 var ownIP = getMyOwnIP();
+const archives = require('./archives/manageFiles');
+
 
 app.use(express.static('public'));
 app.use(express.json());
