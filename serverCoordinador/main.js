@@ -10,6 +10,8 @@ let listaPalabras = [];
 let listaVotos = [0, 0, 0];
 var serverReq;
 let listaTareasPendientes = [];
+var isTime = false;
+var count = 0;
 
 const executeScripts = require('./scripts/execute-scripts');
 
@@ -49,10 +51,10 @@ app.post('/infopixels', async (req, res) => {
 	logger.info(`la instancia ${serverReq} desea modificar el pixel en la pos x: ${req.body.x}, y:${req.body.y} y con un color ${req.body.color}`);
 	listaTareasPendientes.push('la instancia ' + req.body.ip + ' quiere modificar pixel');
 	axios
-		.post(`http://localhost:3000/word`)
+		.post(`http://localhost:3000/word`) // => pide las palabras a todas las instancias
 		.then((response) => {
 			axios
-				.get(`http://localhost:3000/list`)
+				.get(`http://localhost:3000/list`) // => envia la lista de palabras a todas las instancias
 				.then((response) => {})
 				.catch((error) => {
 					console.log(error);
@@ -62,6 +64,9 @@ app.post('/infopixels', async (req, res) => {
 		.catch((error) => {
 			console.log(error);
 		});
+	if (isTime == true) {
+	}
+
 	res.send('Ok');
 });
 
@@ -80,7 +85,15 @@ app.post('/wordV', (req, res) => {
 		listaVotos[2] = listaVotos[2] + 1;
 		console.log('Asi quedo el voto en la 2 ' + listaVotos[2]);
 	}
-	showVotes();
+	count = count + 1;
+	if (count >= 2) {
+		axios
+			.get(`http://localhost:3000/task`)
+			.then((response) => {})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
 	res.sendStatus(200);
 });
 
@@ -93,8 +106,16 @@ app.get('/task', (req, res) => {
 	}
 	var word = listaPalabras[Number(aux)];
 	console.log('La palabra que mas votos tuvo fue ' + word);
-	listaTareasPendientes.push('instancia', aux, 5000);
-	//IP DEL COMPUTADOR
+	var miObjeto = new Object();
+	miObjeto.word = word;
+	miObjeto.veces = 5000;
+	listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
+	axios
+		.post(`http://${serverReq}:8080/task`, miObjeto) // => pide las palabras a todas las instancias
+		.then((response) => {})
+		.catch((error) => {
+			console.log(error);
+		});
 	res.sendStatus(200);
 });
 
@@ -109,6 +130,12 @@ setTimeout(() => {
 		.catch((error) => {
 			console.log(error);
 		});
+}, 5000);
+
+setInterval(() => {
+	for (let i = 0; i < listaTareasPendientes.length; i++) {
+		console.log(listaTareasPendientes[i]);
+	}
 }, 5000);
 
 //Metodo encargado de mostrar la lista

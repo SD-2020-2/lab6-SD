@@ -47,16 +47,14 @@ app.get('/wordV', (req, res) => {
  * Aqui llegan las palabras para voto y se almacenan en la lista
  */
 app.post('/listword', (req, res) => {
+	console.log('Llega la lista de palabras');
 	listPalabrasVote.push(req.body.word1);
 	listPalabrasVote.push(req.body.word2);
 	res.sendStatus(200);
 });
 
-app.get('/ID', (req, res) => {
-	var numAlea = Math.floor(1 + Math.random() * (100 - 1));
-	var miObjeto = new Object();
-	miObjeto.num = numAlea;
-	console.log('El id que dare es' + numAlea);
+app.post('/task', (req, res) => {
+	console.log('La palabra que se escribira: ' + req.body.word + ' y se escribira ' + req.body.veces);
 	//IP DEL COMPUTADOR
 	//axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
 	res.sendStatus(200);
