@@ -7,6 +7,17 @@ const { getMyOwnIP } = require('./scripts/scripts');
 var ownIP = getMyOwnIP();
 const archives = require('./archives/manageFiles');
 
+var multer = require('multer');
+var upload = multer({ dest: './archivos' })
+
+app.post('/subirPrueba', upload.single('file'), function(req,res,next) {
+    archives.leerPrueba(req);
+});
+
+app.get('/logs', (req, res) => {
+	let logs = readLogs();
+	res.send(logs);
+});
 
 app.use(express.static('public'));
 app.use(express.json());

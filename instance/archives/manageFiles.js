@@ -72,3 +72,12 @@ exports.enviarPruebaCarga = function (IP , Puerto , path) {
     );
     data.pipe(req);
 }
+
+exports.leerPrueba() = function(req){
+    fs.readFile(req.file.path, 'utf-8', function(err,data){
+        if(err){
+          res.end(err);
+        }
+        res.end(data);
+    });
+}
