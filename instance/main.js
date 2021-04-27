@@ -32,6 +32,13 @@ function getRandomWord() {
 	return value;
 }
 
+const { readLogs } = require('./logs/logs-controller');
+
+app.get('/logs', (req, res) => {
+	let logs = readLogs();
+	res.send(logs);
+});
+
 app.listen(port, () => {
 	logger.info(`Instance corriendo y escuchando en el puerto ${port}`);
 });
