@@ -6,7 +6,7 @@ const logger = require('./logs/logger');
 const { getMyOwnIP } = require('./scripts/scripts');
 var ownIP = getMyOwnIP();
 const archives = require('./archives/manageFiles');
-
+var path = require('path');
 app.use(express.static('public'));
 app.use(express.json());
 
@@ -54,12 +54,13 @@ app.post('/listword', (req, res) => {
 });
 
 app.post('/task', (req, res) => {
-	var info = archives.escribirArchivo(req.body.word, Number(req.body.veces));
+	console.log(req.body);
+	console.log(req);
+	var info = archives.escribirArchivo(req.body.word, 500);
+	//var info = archives.escribirArchivo('Funciona', 500);
 	console.log('El archivo fue ' + info);
 	console.log('La palabra que se escribira: ' + req.body.word + ' y se escribira ' + req.body.veces);
-	//IP DEL COMPUTADOR
-	//axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
-	res.sendStatus(200);
+	res.sendFile('pruebaCarga.txt', { root: path.join(__dirname, '') });
 });
 
 //Metodo que da una palabra aleatoria

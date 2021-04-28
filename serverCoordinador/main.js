@@ -9,10 +9,10 @@ let listaServidores = [];
 let listaPalabras = [];
 let listaVotos = [0, 0, 0];
 var serverReq;
-var isFinish = false;
 let listaTareasPendientes = [];
 var isTime = false;
 var count = 0;
+const fs = require('fs');
 
 const executeScripts = require('./scripts/execute-scripts');
 
@@ -64,7 +64,6 @@ async function asyncCall() {
 	console.log('calling');
 	const result = await resolveAfter2Seconds();
 	console.log(result);
-	// expected output: "resolved"
 }
 
 app.post('/infopixels', async (req, res) => {
@@ -108,22 +107,37 @@ app.post('/wordV', (req, res) => {
 	res.sendStatus(200);
 });
 
+app.get('/file', (req, res) => {
+	axios
+		.get(`http://localhost:8080/task`)
+		.then((response) => {
+			fs.writeFileSync('prueba.txt', response.data);
+		})
+		.catch((error) => {});
+	res.sendStatus(200);
+});
+
 app.get('/task', (req, res) => {
 	var aux = 0;
+	var pos = 0;
 	for (let i = 0; i < listaVotos.length; i++) {
 		if (aux < listaVotos[i]) {
 			aux = listaVotos[i];
+			pos = i;
 		}
 	}
-	var word = listaPalabras[Number(aux)];
-	console.log('La palabra que mas votos tuvo fue ' + word + ' en la pos ' + aux);
+	var word = listaPalabras[pos];
+
 	var miObjeto = new Object();
 	miObjeto.word = word;
 	miObjeto.veces = 5000;
 	listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
+	console.log('La palabra que mas votos tuvo fue ' + miObjeto.word + ' en la pos ' + aux);
 	axios
 		.post(`http://${serverReq}:8080/task`, miObjeto) // => pide las palabras a todas las instancias
-		.then((response) => {})
+		.then((response) => {
+			fs.writeFileSync('prueba.txt', response.data);
+		})
 		.catch((error) => {
 			console.log(error);
 		});
