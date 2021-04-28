@@ -29,17 +29,20 @@ app.post('/pixel', (req, res) => {
 	miObjeto.ip = ownIP;
 	console.log(miObjeto.x);
 	console.log(miObjeto.y);
-	axios.post(`http://192.168.0.8:3000/infopixels`, miObjeto);
+	axios.post(`http://192.168.0.12:3000/infopixels`, miObjeto);
 	res.sendStatus(200);
 });
 
+/**
+ * 
+ */
 app.get('/wordV', (req, res) => {
 	var numAlea = Math.floor(0 + Math.random() * (2 - 0));
 	var miObjeto = new Object();
 	miObjeto.num = numAlea;
 	console.log('Votare por la palabra en la pos' + numAlea);
 	//IP DEL COMPUTADOR
-	axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
+	axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);
 	res.sendStatus(200);
 });
 
@@ -53,15 +56,21 @@ app.post('/listword', (req, res) => {
 	res.sendStatus(200);
 });
 
+/**
+ * Escribe la palabra enviada por parametro (req.body.word)
+ * n veces como lo indique (req.body.veces))
+ */
 app.post('/task', (req, res) => {
 	console.log(req.body);
 	console.log(req);
-	var info = archives.escribirArchivo(req.body.word, 500);
+	var info = archives.escribirArchivo(req.body.word, req.body.veces);
 	//var info = archives.escribirArchivo('Funciona', 500);
 	console.log('El archivo fue ' + info);
 	console.log('La palabra que se escribira: ' + req.body.word + ' y se escribira ' + req.body.veces);
 	res.sendFile('pruebaCarga.txt', { root: path.join(__dirname, '') });
 });
+
+
 
 //Metodo que da una palabra aleatoria
 function getRandomWord() {

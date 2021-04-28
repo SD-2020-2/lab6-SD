@@ -31,6 +31,8 @@ app.get('/word', (req, res) => {
 	res.sendStatus(200);
 });
 
+
+
 app.get('/list', (req, res) => {
 	var miObjeto = new Object();
 	miObjeto.word1 = listaPalabras[0];
@@ -117,6 +119,11 @@ app.get('/file', (req, res) => {
 	res.sendStatus(200);
 });
 
+/**
+ * Envia la prueba de trabajo a la instancia
+ * que solicito la votacion
+ * Se hace una peticion de la cual se espera un archivo
+ */
 app.get('/task', (req, res) => {
 	var aux = 0;
 	var pos = 0;
@@ -134,7 +141,7 @@ app.get('/task', (req, res) => {
 	listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
 	console.log('La palabra que mas votos tuvo fue ' + miObjeto.word + ' en la pos ' + aux);
 	axios
-		.post(`http://${serverReq}:8080/task`, miObjeto) // => pide las palabras a todas las instancias
+		.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
 		.then((response) => {
 			fs.writeFileSync('prueba.txt', response.data);
 		})
@@ -143,6 +150,10 @@ app.get('/task', (req, res) => {
 		});
 	res.sendStatus(200);
 });
+
+//Enviar el archivo recivido a todas las instancias
+//Las cuales deben responder con un OK
+ 
 
 setTimeout(() => {
 	axios
@@ -198,5 +209,6 @@ app.get('/logs/:instancenum', (req, res) => {
 });
 
 server.listen(port, () => {
+
 	logger.info(`Middleware listening on port ${port}`);
 });

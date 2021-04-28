@@ -24,6 +24,8 @@ const getInstancesIPs = () => {
 	return buildArrayFromString(instancePorts);
 };
 
+
+
 module.exports = {
 	getInstancesIPs,
 };
