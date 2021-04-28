@@ -9,4 +9,156 @@ body {
 
 #pixelart {
     border: 2px solid black;
+    margin: auto;
+}
+
+.colorp {
+    margin-top: 20px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.contenedor {
+    margin-left: 10px;
+    width: 30%;
+    padding: 5px 0;
+    text-align: center;
+    height: 100px;
+    background-color: mediumvioletred;
+}
+
+.selectbox {
+    width: 50%;
+    margin: auto;
+    height: 40%;
+}
+
+.select {
+    background: #fff;
+    width: 18%;
+    box-shadow: 0px 0px 0px rgba(0, 0, 0, .16);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: .2s ease all;
+    margin-bottom: 5px;
+    border: 2px solid transparent;
+    margin: auto;
+    height: 40%;
+    font-size: 16px;
+}
+
+.select.active, .select:hover {
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, .16);
+    border: 2px solid #213f8f;
+}
+
+/* flechita */
+
+.select.active:before {
+    content: "";
+    display: block;
+    border-top: 15px solid #213f8f;
+    border-right: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid transparent;
+    position: absolute;
+    bottom: -30px;
+    left: calc(50% - 15px);
+}
+
+.titulo {
+    margin-bottom: 29px;
+    color: brown;
+    font-weight: 300;
+    font-size: 22px;
+    text-align: center;
+    margin-left: 10px;
+}
+
+.opciones {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, .16);
+    max-height: 400px;
+    overflow: auto;
+    width: 90%;
+    display: none;
+    margin-left: 10px;
+}
+
+/* animacion */
+
+.opciones.active {
+    display: block;
+    animation: fadeIn .3s forwards;
+}
+
+.contenido-opcion {
+    width: 100%;
+    display: flex;
+    transition: .2s ease all;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.opciones .contenido-opcion:hover {
+    background: #213F8F;
+}
+
+#buttons {
+    margin-top: 20px;
+}
+
+.btn_cambiarHora, .btn_instancia {
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    color: #fff;
+    background: #2364d2;
+    cursor: pointer;
+    margin-top: -20px;
+}
+
+.contenedorTareasPendientes {
+    background: rgba(0, 0, 0, .5);
+    /* margin: 0px 30px 5px; */
+    display: block;
+    margin-top: 20px;
+    padding: 50px 20px;
+    width: 50%;
+    margin: auto;
+}
+
+table {
+    background-color: white;
+    border: 1px solid rgb(196, 236, 86);
+    text-align: center;
+    width: 100%;
+}
+
+th, td {
+    border-collapse: collapse;
+    margin: 15px;
+    text-align: center;
+}
+
+td {
+    color: black;
+}
+
+th {
+    background-color: darkcyan;
+    color: white;
+    font-size: 20px;
+}
+
+option {
+    color: black;
+    font-size: 16px;
 }

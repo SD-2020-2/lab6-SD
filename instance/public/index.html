@@ -10,6 +10,27 @@
 </head>
 
 <body>
+
+    <form action="/wordV" method="GET">
+        <label class="titulo" for="cars">Seleccione palabra:</label>
+        <select class="select" name="cars" id="cars">
+            <option value="ama">Amazona</option>
+            <option value="pro">Progenitor</option>
+            <option value="cohe">Cohete</option>
+            <option value="ve">Verdadero</option>
+            <option value="la">Lata</option>
+            <option value="api">Apilar</option>
+            <option value="dine">Dinero</option>
+            <option value="veci">Vecina</option>
+            <option value="docu">Documentos</option>
+            <option value="Circuitos">Circuitos</option>
+        </select>
+        <br><br>
+        <input class="btn_cambiarHora" type="submit" value="Enviar voto">
+    </form>
+
+    </div>
+    <!-- pixelart -->
     <section class="colorp">
         <input type="color" id="colorPicker" value="#FFF700">
         <button id="sendpixel">Enviar Pixel</button>
@@ -18,7 +39,31 @@
     <br>
     <canvas id="pixelart" width="400" height="400"></canvas>
 
+
+    <!-- contenedor de tareas -->
+    <div class="contenedorTareasPendientes">
+        <div id="tablaInfo" class="tablaInfo">
+            <h1 class="titulo2">Tareas pendientes</h1>
+
+            <table id="tareasPendienteinfo">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Veces</th>
+
+                </tr>
+
+                <tr v-for="server,index in tareasPendienteinfo">
+                    <td>{{server.name}}</td>
+                    <td>{{server.status}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="communication.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
     <script src="pixel-art.js"></script>
+
 </body>
 
 </html>
