@@ -4,15 +4,46 @@ const axios = require('axios');
 const port = 8080;
 const logger = require('./logs/logger');
 const { getMyOwnIP } = require('./scripts/scripts');
+const archives = require('./archives/manageFiles');//Manejo Archivos
 var ownIP = getMyOwnIP();
-const archives = require('./archives/manageFiles');
 var path = require('path');
 app.use(express.static('public'));
 app.use(express.json());
 
+var palabra = "";
+var veces = 0;
+
 let listaPalabras = ['Amazona', 'Progenitor', 'Cohete', 'Verdadero', 'Lata', 'Apilar', 'Dinero', 'Vecina', 'Documentos', 'Circuitos'];
 let listaTareasPendientes = [];
 let listPalabrasVote = [];
+
+var multer = require('multer');
+
+
+let storage = multer.diskStorage({
+	destination:(req, file, cb) =>{
+		cb(null, './')
+	},
+	filename:(req, file, cb)=> {
+		cb(null, 'pruebaCarga.txt');
+	}
+});
+
+const upload = multer({storage})
+/**
+ * Lee la prueba de carga
+ * y devulve un codigo diferente de -1
+ * si la tarea esta bien hecha
+ */
+ app.post('/validarPrueba', upload.single('file'), function(req,res,next) {
+    let creoArchivo = archives.leerPrueba(req , res);
+	let validoArchivo = archives.pruebaCarga(palabra , veces);
+	if(creoArchivo && validoArchivo){
+		res.send(""+Math.round(Math.random() * (50 - 1) + 1));
+	}else {
+		res.send("-1");
+	}
+});
 
 app.get('/word', (req, res) => {
 	var word = listaPalabras[getRandomWord()];
@@ -50,9 +81,19 @@ app.get('/wordV', (req, res) => {
  * Aqui llegan las palabras para voto y se almacenan en la lista
  */
 app.post('/listword', (req, res) => {
-	console.log('Llega la lista de palabras' + req.body.word1);
+	logger.info('Llega la lista de palabras' + req.body.word1);
 	listPalabrasVote.push(req.body.word1);
 	listPalabrasVote.push(req.body.word2);
+	res.sendStatus(200);
+});
+
+/**
+ * Se recibe una palabra y la cantidad de veces que haya que escribirla
+ */
+app.post('/yourTask', (req, res) => {
+	logger.info('La tarea es escribir ' + req.body.palabra + " " + req.body.veces + " veces");
+	palabra = req.body.palabra;
+	veces = req.body.veces;
 	res.sendStatus(200);
 });
 

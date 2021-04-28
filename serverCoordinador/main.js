@@ -4,6 +4,7 @@ const axios = require('axios');
 const port = 3000;
 const bodyParser = require('body-parser');
 const logger = require('./logs/logger');
+const archives = require('./archives/manageFiles');//Manejo Archivos
 var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
@@ -149,6 +150,8 @@ app.get('/task', (req, res) => {
 			console.log(error);
 		});
 	res.sendStatus(200);
+	archives.enviarListaTareas(listaServidores , miObjeto.word , 5000);
+	archives.enviarPruebaATodosLosServidores(listaServidores);
 });
 
 //Enviar el archivo recivido a todas las instancias
@@ -209,6 +212,5 @@ app.get('/logs/:instancenum', (req, res) => {
 });
 
 server.listen(port, () => {
-
 	logger.info(`Middleware listening on port ${port}`);
 });

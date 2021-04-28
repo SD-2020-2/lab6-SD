@@ -2,6 +2,9 @@ const readline = require('readline'),
 	fs = require('fs'),
 	NOMBRE_ARCHIVO = 'pruebaCarga.txt';
 
+
+
+
 /**
  * Verifica que una palabra se haya escrito una cantidad de
  * veces en un archivo
@@ -14,12 +17,14 @@ exports.pruebaCarga = function (palabra, veces) {
 	let i = 0;
 	while (array[i] != null) {
 		if (palabra != array[i]) {
+			console.log('La palabra ' + palabra + " no coincide con " + array[i]);
 			return false;
 		}
 		i++;
-	}
-	if (i == veces) {
-		return true;
+		if (i == veces) { 
+			console.log('Se valido la prueba de carga: ' + palabra + " veces " + veces);
+			return true;
+		}
 	}
 	return false;
 };
@@ -49,7 +54,7 @@ exports.escribirMatriz = function (matriz) {
 	}
 };
 
-exports.enviarPruebaCarga = function (IP, Puerto, path) {
+function enviarPruebaCarga (IP, Puerto, path) {
 	console.log('Se esta enviando la prueba de carga al lider...');
 	var stream = fs.createReadStream(NOMBRE_ARCHIVO);
 	var data = new FormData();
@@ -65,8 +70,25 @@ exports.enviarPruebaCarga = function (IP, Puerto, path) {
 			headers: data.getHeaders(),
 		},
 		(response) => {
-			console.log(response.statusCode);
+			console.log("Respuesta dese algun esclavo: " + response.statusCode);
 		}
 	);
 	data.pipe(req);
 };
+
+exports.enviarPruebaATodosLosServidores = function (listaServidores){
+	for (let i = 0; i < listaServidores.length; i++) {
+		enviarPruebaCarga(`http://${listaServidores[i]}` , 8080 , 'validarPrueba');
+	}
+}
+
+exports.leerPrueba = function(req , res){
+    fs.readFileSync(req.file.path, 'utf-8', function(err,data){
+        if(err){
+          res.end(err);
+		  return false;
+        }
+        res.end(data);
+    });
+	return true;
+}
