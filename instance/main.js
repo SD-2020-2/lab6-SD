@@ -69,13 +69,18 @@ app.post('/pixel', (req, res) => {
  * Para votar
  */
 app.post('/wordV', (req, res) => {
-	var numAlea = Math.floor(0 + Math.random() * (2 - 0));
 	var miObjeto = new Object();
-	miObjeto.num = numAlea;
-	console.log('Bodyy ' + req.body.cars);
-	console.log('Votare por la palabra en la pos' + numAlea);
+	if (req.body.cars === 'ama') {
+		miObjeto.word = 'Amazona';
+	} else if (req.body.cars === 'pro') {
+		miObjeto.word = 'Progenitor';
+	} else if (req.body.cars === 'coh') {
+		miObjeto.word = 'Cohete';
+	}
+
+	console.log('Votare por la palabra ' + miObjeto.word);
 	//IP DEL COMPUTADOR
-	axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);
+	axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
 	res.sendStatus(200);
 });
 
