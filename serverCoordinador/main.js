@@ -10,7 +10,8 @@ const fs = require('fs');
 
 var server = require('http').Server(app);
 let listaServidores = [];
-let listaPixeles = ['x:250.y:230.color:#fffff', 'x:20.y:30.color:#fffff'];
+let listaPixeles = [];
+//'x:250.y:230.color:#fffff', 'x:20.y:30.color:#fffff'
 let listaCertificado = [];
 let listaVotos = [];
 var serverReq;
@@ -70,6 +71,12 @@ app.get('/file', (req, res) => {
 		})
 		.catch((error) => {});
 	res.sendStatus(200);
+});
+
+app.get('/listpixels', (req, res) => {
+	var miObjeto = new Object();
+	miObjeto.info = listaPixeles.toString();
+	res.send(miObjeto.info);
 });
 
 /**
@@ -136,7 +143,7 @@ app.get('/task', (req, res) => {
 				 */
 				archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
 				archives.enviarPruebaATodosLosServidores(listaServidores);
-				setTimeout(isValidated , 3000);
+				setTimeout(isValidated, 3000);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -155,9 +162,10 @@ app.get('/task', (req, res) => {
 function isValidated() {
 	if (archives.isValidated()) {
 		console.log('Subiendo a la lista');
-		console.log('x:' + currentColor.x + ',y:' + currentColor.y + ',color:' + currentColor.color);
-		listaPixeles.push('x:' + currentColor.x + ',y:' + currentColor.y + ',color:' + currentColor.color);
+		console.log('x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
+		listaPixeles.push('x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
 	}
+	console.log(archives.sendlistVerify);
 }
 
 //Enviar el archivo recivido a todas las instancias

@@ -1,4 +1,4 @@
-function getListPixel(){
+/*function getListPixel(){
 	fetch('/listPixels')
     .then( response => response.text())
     .then(data => {
@@ -10,4 +10,4 @@ function getListPixel(){
 function splitData(data){
     data.split("*");
     
-}
+}*/

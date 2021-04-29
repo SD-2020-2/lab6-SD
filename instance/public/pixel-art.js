@@ -107,7 +107,7 @@ function findIndex(num, size) {
  * @param { Number } y
  */
 function drawSquare(color, x, y) {
-	context.fillStyle = color || 'white';
+	context.fillStyle = color;
 
 	// Calcula el tamaño que debe tener cada cuadrado
 	let squareWidth = canvasWidth / numCols;
@@ -155,25 +155,30 @@ function sendPixel() {
 		canvas.classList.remove('block-pixel-art');
 	}, 10000);
 }
+setInterval(() => {
+	getListPixel();
+}, 4000);
 
-function getListPixel(){
+function getListPixel() {
 	fetch('/listPixels')
-    .then( response => response.text())
-    .then(data => {
-        console.log(data);
-		splitInfo(data);
-    })
-    .catch(err => console.log(err));
+		.then((response) => response.text())
+		.then((data) => {
+			console.log(data);
+			splitInfo(data);
+		})
+		.catch((err) => console.log(err));
 }
 
 //x:250 . y:230 . color:#fffff
-function splitInfo(data){
-	let array = data.split("*");
-	array.forEach(function(elemento) {
-		let array2 = elemento.split(".");
-		let x = array2[0].split(":")[1];
-		let y = array2[1].split(":")[1];
-		let color = array2[2].split(":")[1];
+function splitInfo(data) {
+	let array = data.split(',');
+	console.log('split info' + array.length);
+	array.forEach(function (elemento) {
+		let array2 = elemento.split('|');
+		let x = array2[0].split(':')[1];
+		let y = array2[1].split(':')[1];
+		let color = array2[2].split(':')[1];
+		color = color.slice(0, -1);
 		drawSquare(color, x, y);
-	})
+	});
 }

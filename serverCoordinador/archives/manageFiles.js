@@ -5,7 +5,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const { request } = require('http');
 
-var verifyCode = []
+var verifyCode = [];
 
 /**
  * Verifica que una palabra se haya escrito una cantidad de
@@ -57,80 +57,84 @@ exports.escribirMatriz = function (matriz) {
 /**
  * Envia el archivo
  * prueba carga a un servidor particular
- * @param {*} Puerto 
+ * @param {*} Puerto
  */
-function enviarPruebaCarga (Puerto) {
+function enviarPruebaCarga(Puerto) {
 	console.log('Se esta enviando la prueba de carga al lider...');
-    var stream = fs.createReadStream(NOMBRE_ARCHIVO);
-    var data = new FormData();
-    data.append('file', stream);/*Son parametros Clave Valor 
+	var stream = fs.createReadStream(NOMBRE_ARCHIVO);
+	var data = new FormData();
+	data.append('file', stream); /*Son parametros Clave Valor 
     DEBEN SER LOS MISMOS EN EL SERVIDOR DE DESTINO
     */
-    var req = request(
-        {
-            host: "localhost",
-            port: Puerto,
-            path: "/validarPrueba",
-            method: 'POST',
-            headers: data.getHeaders(),
-        },
-        response => {
+	var req = request(
+		{
+			host: 'localhost',
+			port: Puerto,
+			path: '/validarPrueba',
+			method: 'POST',
+			headers: data.getHeaders(),
+		},
+		(response) => {
 			response.setEncoding('utf8');
-    		response.on('data', function (body) {
-				console.log("Codigo de " + Puerto + " es: " + body);
+			response.on('data', function (body) {
+				console.log('Codigo de ' + Puerto + ' es: ' + body);
 				verifyCode.push(body);
-    		});
-        }
-    );
-    data.pipe(req);
-};
-/**
- * Envia el archivo prueba para ser verificado en todos 
- * los servidores
- * @param {*} listaServidores 
- */
-exports.enviarPruebaATodosLosServidores = function (listaServidores){
-	let i = 1;
-	listaServidores.forEach(function(elemento) {
-		console.log("Enviando prueba para validar a: " + elemento);
-		enviarPruebaCarga(8080+i);
-		i++;
-	})
+			});
+		}
+	);
+	data.pipe(req);
 }
+/**
+ * Envia el archivo prueba para ser verificado en todos
+ * los servidores
+ * @param {*} listaServidores
+ */
+exports.enviarPruebaATodosLosServidores = function (listaServidores) {
+	let i = 1;
+	listaServidores.forEach(function (elemento) {
+		console.log('Enviando prueba para validar a: ' + elemento);
+		enviarPruebaCarga(8080 + i);
+		i++;
+	});
+};
 
 /**
  * Envia tareas a otros servidores
  * La palabra y la cantidad de veces que tiene que escribirla
- * @param {*} listaServidores 
- * @param {*} listaTareas 
+ * @param {*} listaServidores
+ * @param {*} listaTareas
  */
-exports.enviarListaTareas = function(listaServidores , palabra , veces){
-	console.log("se supone que envio: " + palabra + " veces " + veces);
+exports.enviarListaTareas = function (listaServidores, palabra, veces) {
+	console.log('se supone que envio: ' + palabra + ' veces ' + veces);
 	var miObjeto = new Object();
 	miObjeto.palabra = palabra;
 	miObjeto.veces = veces;
 	let i = 1;
-	listaServidores.forEach(function(elemento) {
-		console.log("Enviando tarea a : " + elemento);
+	listaServidores.forEach(function (elemento) {
+		console.log('Enviando tarea a : ' + elemento);
 		axios
 			.post(`http://${elemento}:8080/yourTask`, miObjeto)
 			.then((response) => {})
 			.catch((error) => {
 				console.log(error);
-		});
+			});
 		i++;
 	});
-}
+};
 
-exports.isValidated = function(){
-	console.log("La lista de verificacion tiene como tamano: " + verifyCode.length);
-	if(verifyCode.length > 0){
-		verifyCode.forEach(function(elemento) {
-			if(elemento == -1){
+exports.isValidated = function () {
+	console.log('La lista de verificacion tiene como tamano: ' + verifyCode.length);
+	if (verifyCode.length > 0) {
+		verifyCode.forEach(function (elemento) {
+			if (elemento == -1) {
 				return false;
 			}
 		});
-		return true;	
+		return true;
 	}
 	return false;
-}
+};
+
+exports.sendlistVerify = function () {
+	return verifyCode;
+};

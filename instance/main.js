@@ -7,6 +7,7 @@ const { getMyOwnIP } = require('./scripts/scripts');
 const archives = require('./archives/manageFiles'); //Manejo Archivos
 var ownIP = getMyOwnIP();
 var path = require('path');
+var id;
 app.use(express.static('public'));
 
 app.use(express.json());
@@ -45,6 +46,7 @@ app.post('/validarPrueba', upload.single('file'), function (req, res, next) {
 
 	if (creoArchivo && validoArchivo) {
 		var aux = Math.round(Math.random() * (100 - 1) + 1);
+		id = aux;
 		logger.info('El ID que mi instancia ' + ownIP + ' da es ' + aux);
 		res.send('' + aux);
 	} else {
@@ -56,13 +58,24 @@ app.post('/validarPrueba', upload.single('file'), function (req, res, next) {
  * Lista de pixeles a mostrar en la interfaz
  */
 app.get('/listPixels', (req, res) => {
-	allInfo = ''; //quitar asdsd
-	console.log('aqui pedi la lista');
-	listaPixeles.forEach(function (elemento) {
-		allInfo += elemento + '*';
-		console.log(elemento);
-	});
-	res.send(allInfo);
+	var miObjeto = new Object();
+	axios
+		.get(`http://192.168.0.8:3000/listpixels`)
+		.then((response) => {
+			console.log(response.data);
+			let aux = response.data.split(',');
+			listaPixeles = [];
+			aux.forEach((element) => {
+				listaPixeles.push(element);
+			});
+			miObjeto.info = listaPixeles.toString();
+			console.log(listaPixeles.length);
+			console.log('Envia => ' + miObjeto.info);
+			res.send(JSON.stringify(miObjeto.info));
+		})
+		.catch((error) => {
+			console.log(error);
+		});
 });
 
 /**
@@ -136,13 +149,6 @@ app.post('/update', (req, res) => {
 	listaTareasPendientes = [];
 	aux.forEach((element) => {
 		listaTareasPendientes.push(element);
-	});
-
-	let aux2 = req.body.pixels.split(',');
-	listaPixeles = [];
-	aux2.forEach((element) => {
-		consolel.log('actualizo');
-		listaPixeles.push(element);
 	});
 });
 
