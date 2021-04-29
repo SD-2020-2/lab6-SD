@@ -155,3 +155,25 @@ function sendPixel() {
 		canvas.classList.remove('block-pixel-art');
 	}, 10000);
 }
+
+function getListPixel(){
+	fetch('/listPixels')
+    .then( response => response.text())
+    .then(data => {
+        console.log(data);
+		splitInfo(data);
+    })
+    .catch(err => console.log(err));
+}
+
+//x:250 . y:230 . color:#fffff
+function splitInfo(data){
+	let array = data.split("*");
+	array.forEach(function(elemento) {
+		let array2 = elemento.split(".");
+		let x = array2[0].split(":")[1];
+		let y = array2[1].split(":")[1];
+		let color = array2[2].split(":")[1];
+		drawSquare(color, x, y);
+	})
+}

@@ -136,6 +136,7 @@ app.get('/task', (req, res) => {
 				 */
 				archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
 				archives.enviarPruebaATodosLosServidores(listaServidores);
+				setTimeout(isValidated , 3000);
 			})
 			.catch((error) => {
 				console.log(error);
