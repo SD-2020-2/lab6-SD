@@ -73,6 +73,7 @@ async function asyncCall() {
 
 app.post('/infopixels', async (req, res) => {
 	serverReq = req.body.ip;
+	currentColor = req.body;
 	logger.info(`la instancia ${serverReq} desea modificar el pixel en la pos x: ${req.body.x}, y:${req.body.y} y con un color ${req.body.color}`);
 	listaTareasPendientes.push('la instancia ' + req.body.ip + ' quiere modificar pixel');
 	axios
@@ -145,12 +146,25 @@ app.get('/task', (req, res) => {
 			fs.writeFileSync('prueba.txt', response.data);
 			archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
 			archives.enviarPruebaATodosLosServidores(listaServidores);
+			setTimeout(isValidated , 3000);
 		})
 		.catch((error) => {
 			console.log(error);
 		});
 	res.sendStatus(200);
 });
+
+/**
+ * Si la prueba de carga fue validad en todas las instancias
+ * modifica la lista de pixeles
+ */
+function isValidated(){
+	if(archives.isValidated()){
+		console.log("Subiendo a la lista");
+		console.log("x:" + currentColor.x + ",y:"+currentColor.y+",color:"+currentColor.color);
+		listaPixeles.push("x:" + currentColor.x + ",y:"+currentColor.y+",color:"+currentColor.color);
+	}
+}
 
 //Enviar el archivo recivido a todas las instancias
 //Las cuales deben responder con un OK

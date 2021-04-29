@@ -5,7 +5,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const { request } = require('http');
 
-let verifyCode = []
+var verifyCode = []
 
 /**
  * Verifica que una palabra se haya escrito una cantidad de
@@ -122,16 +122,15 @@ exports.enviarListaTareas = function(listaServidores , palabra , veces){
 	});
 }
 
-exports.enviarObjeto = function(currentColor , listaServidores){
-	console.log("se supone que envio: " + palabra + " veces " + veces);
-	let i = 1;
-	listaServidores.forEach(function(elemento) {
-		console.log("Enviando tarea a : " + elemento);
-		axios
-			.post(`http://${elemento}:8080/pushColor`, currentColor)
-			.then((response) => {})
-			.catch((error) => {
-				console.log(error);
+exports.isValidated = function(){
+	console.log("La lista de verificacion tiene como tamano: " + verifyCode.length);
+	if(verifyCode.length > 0){
+		verifyCode.forEach(function(elemento) {
+			if(elemento == -1){
+				return false;
+			}
 		});
-	});
+		return true;	
+	}
+	return false;
 }

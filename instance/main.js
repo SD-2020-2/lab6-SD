@@ -18,7 +18,7 @@ var veces = 0;
 let listaPalabras = ['Amazona', 'Progenitor', 'Cohete', 'Verdadero', 'Lata', 'Apilar', 'Dinero', 'Vecina', 'Documentos', 'Circuitos'];
 let listaTareasPendientes = [];
 let listPalabrasVote = [];
-let listaPixeles = [];
+let toPaint = [];
 
 var multer = require('multer');
 
@@ -62,7 +62,7 @@ app.post('/pixel', (req, res) => {
 	miObjeto.ip = ownIP;
 	console.log(miObjeto.x);
 	console.log(miObjeto.y);
-	axios.post(`http://192.168.0.8:3000/infopixels`, miObjeto);
+	axios.post(`http://192.168.0.12:3000/infopixels`, miObjeto);
 	res.sendStatus(200);
 });
 
@@ -70,18 +70,14 @@ app.post('/pixel', (req, res) => {
  * Para votar
  */
 app.post('/wordV', (req, res) => {
+	var numAlea = Math.floor(0 + Math.random() * (2 - 0));
 	var miObjeto = new Object();
-	if (req.body.cars === 'ama') {
-		miObjeto.word = 'Amazona';
-	} else if (req.body.cars === 'pro') {
-		miObjeto.word = 'Progenitor';
-	} else if (req.body.cars === 'coh') {
-		miObjeto.word = 'Cohete';
-	}
-
-	console.log('Votare por la palabra ' + miObjeto.word);
+	miObjeto.num = numAlea;
+	console.log('Bodyy ' + req.body.cars);
+	console.log('Votare por la palabra en la pos' + numAlea);
+	miObjeto.word = req.body.cars;
 	//IP DEL COMPUTADOR
-	axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
+	axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);
 	res.sendStatus(200);
 });
 
@@ -146,13 +142,13 @@ app.post('/update', (req, res) => {
 	listaTareasPendientes = [];
 	aux.forEach((element) => {
 		listaTareasPendientes.push(element);
+		console.log(listaTareasPendientes[0] + 'tamanio' + listaTareasPendientes.length);
 	});
+});
 
-	let aux2 = req.body.pixels.split(',');
-	listaPixeles = [];
-	aux2.forEach((element) => {
-		listaPixeles.push(element);
-	});
+app.post('/pushColor', (req, res) => {
+	let toPush = req.body.x +"*" + req.body.y+"*" + req.body.color;
+	toPaint.push(toPush);
 });
 
 app.listen(port, () => {
