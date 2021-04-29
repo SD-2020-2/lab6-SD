@@ -38,21 +38,15 @@
     <!-- contenedor de tareas -->
     <div class="contenedorTareasPendientes">
         <div id="tablaInfo" class="tablaInfo">
-            <h1 class="titulo2">Tareas pendientes</h1>
+            <!-- <h1 class="titulo2">Tareas pendientes</h1> -->
 
-            <table id="tareasPendienteinfo">
+            <table id="taskInfo">
                 <tr>
-                    <th scope="col">Quien lo realiza</th>
-                    <th scope="col">Tarea</th>
-                    <th scope="col">Pixel</th>
-
-
+                    <th scope="col">Tareas pendientes</th>
                 </tr>
 
-                <tr v-for="server,index in tareasPendienteinfo">
-                    <td>{{server.name}}</td>
-                    <td>{{server.status}}</td>
-                    <td>{{server.status}}</td>
+                <tr v-for="server,index in taskList">
+                    <td>{{server}}</td>
                 </tr>
             </table>
         </div>
