@@ -156,12 +156,12 @@ app.post("/update", (req, res) => {
   aux.forEach((element) => {
     listaTareasPendientes.push(element);
   });
-
+  listaPixeles = [];
   let aux2 = req.body.pixels.split(",");
   aux2.forEach((element) => {
     listaPixeles.push(element);
-	console.log("Agragando a lista de pixeles");
-  });
+});
+console.log("Agregando a lista de pixeles " + listaPixeles.length);
 });
 
 app.get("/listask", (req, res) => {
