@@ -56,11 +56,12 @@ app.post('/validarPrueba', upload.single('file'), function (req, res, next) {
  * Lista de pixeles a mostrar en la interfaz
  */
 app.get('/listPixels', (req, res) => {
-	allInfo = "";//quitar asdsd
-	listaPixeles.forEach(function(elemento) {
-		allInfo += elemento + "*";
+	allInfo = ''; //quitar asdsd
+	console.log('aqui pedi la lista');
+	listaPixeles.forEach(function (elemento) {
+		allInfo += elemento + '*';
 		console.log(elemento);
-	})
+	});
 	res.send(allInfo);
 });
 
@@ -73,7 +74,7 @@ app.post('/pixel', (req, res) => {
 	miObjeto.y = req.body.y;
 	miObjeto.color = req.body.color;
 	miObjeto.ip = ownIP;
-	axios.post(`http://192.168.0.12:3000/infopixels`, miObjeto);
+	axios.post(`http://192.168.0.8:3000/infopixels`, miObjeto);
 	res.sendStatus(200);
 });
 
@@ -92,7 +93,7 @@ app.post('/wordV', (req, res) => {
 	}
 
 	logger.info('Votare por la palabra ' + miObjeto.word);
-	axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);
+	axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
 	res.sendStatus(200);
 });
 
@@ -140,6 +141,7 @@ app.post('/update', (req, res) => {
 	let aux2 = req.body.pixels.split(',');
 	listaPixeles = [];
 	aux2.forEach((element) => {
+		consolel.log('actualizo');
 		listaPixeles.push(element);
 	});
 });
