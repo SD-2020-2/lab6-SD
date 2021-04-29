@@ -5,21 +5,18 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const logger = require('./logs/logger');
 const archives = require('./archives/manageFiles'); //Manejo Archivos
+const executeScripts = require('./scripts/execute-scripts');
+const fs = require('fs');
+
 var server = require('http').Server(app);
 let listaServidores = [];
-let listaPalabras = [];
 let listaPixeles = ['x:250.y:230.color:#fffff', 'x:20.y:30.color:#fffff'];
 let listaCertificado = [];
 let listaVotos = [];
 var serverReq;
 let listaTareasPendientes = [];
-var isTime = false;
 var count = 0;
-const fs = require('fs');
-
 var currentColor;
-
-const executeScripts = require('./scripts/execute-scripts');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,71 +24,30 @@ app.use(express.urlencoded({ extended: true }));
 app.use(require('./routes/router'));
 app.use(express.static('public'));
 
-app.get('/word', (req, res) => {
-	for (let i = 0; i < listaServidores.length; i++) {
-		axios.get(`http://${listaServidores[i]}:8080/word`).then((response) => {
-			listaPalabras.push(response.data.wordV);
-		});
-	}
-	res.sendStatus(200);
-});
-
-app.get('/list', (req, res) => {
-	var miObjeto = new Object();
-	miObjeto.word1 = listaPalabras[0];
-	miObjeto.word2 = listaPalabras[1];
-	for (let i = 0; i < listaServidores.length; i++) {
-		axios
-			.post(`http://${listaServidores[i]}:8080/listword`, miObjeto)
-			.then((response) => {})
-			.catch((error) => {
-				console.log(error);
-			});
-	}
-	res.sendStatus(200);
-});
-
-function resolveAfter2Seconds() {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			axios
-				.get(`http://localhost:3000/list`)
-				.then((response) => {})
-				.catch((error) => {
-					console.log(error);
-				});
-			console.log('Redy');
-		}, 4000);
-	});
-}
-
-async function asyncCall() {
-	console.log('calling');
-	const result = await resolveAfter2Seconds();
-	console.log(result);
-}
-
+/**
+ * Recibe en el request la informacion del pixel
+ * enviado por la instancia
+ * Aparte de que lo agrega a la lista de tareas pendientes
+ */
 app.post('/infopixels', async (req, res) => {
 	serverReq = req.body.ip;
 	currentColor = req.body;
 	logger.info(`la instancia ${serverReq} desea modificar el pixel en la pos x: ${req.body.x}, y:${req.body.y} y con un color ${req.body.color}`);
 	listaTareasPendientes.push('la instancia ' + req.body.ip + ' quiere modificar pixel');
-	axios
-		.get(`http://localhost:3000/word`)
-		.then((response) => {})
-		.catch((error) => {
-			console.log(error);
-		});
-	asyncCall();
 	res.send('Ok');
 });
 
+/**
+ * Peticion llamada por la instancia, para las votaciones
+ * En el momento que ya estan todas las votaciones
+ * procede a asignar la tarea en /task
+ */
 app.post('/wordV', (req, res) => {
 	var word = req.body.word;
-	console.log('me llega: ' + word);
+	logger.info('La votacion es para la palabra' + word);
 	listaVotos.push(word);
 	count = count + 1;
-	if (count >= 2) {
+	if (count >= listaServidores.length) {
 		axios
 			.get(`http://localhost:3000/task`)
 			.then((response) => {})
@@ -103,6 +59,9 @@ app.post('/wordV', (req, res) => {
 	res.sendStatus(200);
 });
 
+/**
+ * No se que hace este metodo
+ */
 app.get('/file', (req, res) => {
 	axios
 		.get(`http://localhost:8080/task`)
@@ -113,6 +72,12 @@ app.get('/file', (req, res) => {
 	res.sendStatus(200);
 });
 
+/**
+ * Metodo que cuenta cuantas veces esta una palabra en la
+ * lista de votaciones
+ * @param {*} word
+ * @returns el numero de veces que encontro la palabra
+ */
 function getTime(word) {
 	var count = 0;
 	listaVotos.forEach((element) => {
@@ -135,11 +100,13 @@ app.get('/task', (req, res) => {
 	counts.push(getTime('Cohete'));
 	var mayor = 0;
 	for (let i = 0; i < counts.length; i++) {
-		if (counts[i] > mayor) {
-			mayor = i;
-		}
-		if (counts[i] == mayor && mayor != 0) {
-			mayor = 5;
+		if (counts[i] != 0) {
+			if (counts[i] > mayor) {
+				mayor = i;
+			}
+			if (counts[i] == mayor) {
+				mayor = 5;
+			}
 		}
 	}
 	listaVotos = [];
@@ -153,16 +120,20 @@ app.get('/task', (req, res) => {
 	} else if (mayor == 5) {
 		word = 'X';
 	}
+	//Si word es igual a X significa que hubo un empate entre las palabras
 	if (word != 'X') {
 		var miObjeto = new Object();
 		miObjeto.word = word;
 		miObjeto.veces = 5000;
 		listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
-		console.log('La palabra que mas votos tuvo fue ' + miObjeto.word);
+		logger.info('La palabra que mas votos tuvo fue ' + miObjeto.word);
 		axios
 			.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
 			.then((response) => {
 				fs.writeFileSync('prueba.txt', response.data);
+				/**
+				 * Envia la tarea que hizo la instancia a validar a todas las demas
+				 */
 				archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
 				archives.enviarPruebaATodosLosServidores(listaServidores);
 			})
@@ -172,7 +143,7 @@ app.get('/task', (req, res) => {
 		res.sendStatus(200);
 	} else {
 		logger.info('No hubo votacion, quedaron en empate.Volver a intentar');
-		res.send('Se debe pedir de nuevo votacion');
+		res.sendStatus(400);
 	}
 });
 
@@ -180,17 +151,21 @@ app.get('/task', (req, res) => {
  * Si la prueba de carga fue validad en todas las instancias
  * modifica la lista de pixeles
  */
-function isValidated(){
-	if(archives.isValidated()){
-		console.log("Subiendo a la lista");
-		console.log("x:" + currentColor.x + ",y:"+currentColor.y+",color:"+currentColor.color);
-		listaPixeles.push("x:" + currentColor.x + ",y:"+currentColor.y+",color:"+currentColor.color);
+function isValidated() {
+	if (archives.isValidated()) {
+		console.log('Subiendo a la lista');
+		console.log('x:' + currentColor.x + ',y:' + currentColor.y + ',color:' + currentColor.color);
+		listaPixeles.push('x:' + currentColor.x + ',y:' + currentColor.y + ',color:' + currentColor.color);
 	}
 }
 
 //Enviar el archivo recivido a todas las instancias
 //Las cuales deben responder con un OK
 
+/**
+ * Trae la lista de todas las instancias
+ * y las coloca en la lista de servidores
+ */
 setTimeout(() => {
 	axios
 		.get(`http://localhost:3000/instance`)
@@ -204,6 +179,11 @@ setTimeout(() => {
 		});
 }, 5000);
 
+/**
+ * Actualiza cada 5 segundos con todas las instancias
+ * la lista de tareas pendientes y la lista
+ * de pixeles
+ */
 setInterval(() => {
 	var miObjeto = new Object();
 	miObjeto.info = listaTareasPendientes.toString();
@@ -223,14 +203,6 @@ function showList() {
 	console.log('Lista de instancias: ');
 	for (let i = 0; i < listaServidores.length; i++) {
 		console.log(listaServidores[i]);
-	}
-}
-
-//Metodo encargado de mostrar la lista
-function showVotes() {
-	console.log('lista de Votos');
-	for (let i = 0; i < listaVotos.length; i++) {
-		console.log(listaVotos[i]);
 	}
 }
 

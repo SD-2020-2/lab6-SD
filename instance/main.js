@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 var palabra = '';
 var veces = 0;
 
-let listaPalabras = ['Amazona', 'Progenitor', 'Cohete', 'Verdadero', 'Lata', 'Apilar', 'Dinero', 'Vecina', 'Documentos', 'Circuitos'];
+let listaPalabras = ['Amazona', 'Progenitor', 'Cohete'];
 let listaTareasPendientes = [];
 let listPalabrasVote = [];
 let toPaint = [];
@@ -33,6 +33,7 @@ let storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
 /**
  * Lee la prueba de carga
  * y devulve un codigo diferente de -1
@@ -41,34 +42,31 @@ const upload = multer({ storage });
 app.post('/validarPrueba', upload.single('file'), function (req, res, next) {
 	let creoArchivo = archives.leerPrueba(req, res);
 	let validoArchivo = archives.pruebaCarga(palabra, veces);
+
 	if (creoArchivo && validoArchivo) {
-		res.send('' + Math.round(Math.random() * (100 - 1) + 1));
+		var aux = Math.round(Math.random() * (100 - 1) + 1);
+		logger.info('El ID que mi instancia ' + ownIP + ' da es ' + aux);
+		res.send('' + aux);
 	} else {
 		res.send('-1');
 	}
 });
 
-app.get('/word', (req, res) => {
-	var word = listaPalabras[getRandomWord()];
-	logger.info('Mi instancia es ' + ownIP + ' y La palabra aleatoria es: ' + word);
-	res.send({ wordV: word });
-});
-
-//enviar la lista de palabras a las instancias
+/**
+ * Envia la informacion del pixel (x,y,color) al coordinador
+ */
 app.post('/pixel', (req, res) => {
 	var miObjeto = new Object();
 	miObjeto.x = req.body.x;
 	miObjeto.y = req.body.y;
 	miObjeto.color = req.body.color;
 	miObjeto.ip = ownIP;
-	console.log(miObjeto.x);
-	console.log(miObjeto.y);
 	axios.post(`http://192.168.0.8:3000/infopixels`, miObjeto);
 	res.sendStatus(200);
 });
 
 /**
- * Para votar
+ * Obtiene el voto de interfaz y lo envia al coordinador
  */
 app.post('/wordV', (req, res) => {
 	var miObjeto = new Object();
@@ -81,19 +79,8 @@ app.post('/wordV', (req, res) => {
 		miObjeto.word = 'Cohete';
 	}
 
-	console.log('Votare por la palabra ' + miObjeto.word);
-	//IP DEL COMPUTADOR
+	logger.info('Votare por la palabra ' + miObjeto.word);
 	axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
-	res.sendStatus(200);
-});
-
-/**
- * Aqui llegan las palabras para voto y se almacenan en la lista
- */
-app.post('/listword', (req, res) => {
-	logger.info('Llega la lista de palabras' + req.body.word1);
-	listPalabrasVote.push(req.body.word1);
-	listPalabrasVote.push(req.body.word2);
 	res.sendStatus(200);
 });
 
@@ -110,20 +97,14 @@ app.post('/yourTask', (req, res) => {
 /**
  * Escribe la palabra enviada por parametro (req.body.word)
  * n veces como lo indique (req.body.veces))
+ * y envia el archivo al coordinador para su futura verificacion
  */
 app.post('/task', (req, res) => {
 	var info = archives.escribirArchivo(req.body.word, req.body.veces);
-	//var info = archives.escribirArchivo('Funciona', 500);
-	console.log('El archivo fue ' + info);
-	console.log('La palabra que se escribira: ' + req.body.word + ' y se escribira ' + req.body.veces);
+	logger.info('La palabra que se escribira: ' + req.body.word + ' y se escribira ' + req.body.veces);
+	logger.info('Se escribio el archivo? => ' + info);
 	res.sendFile('pruebaCarga.txt', { root: path.join(__dirname, '') });
 });
-
-//Metodo que da una palabra aleatoria
-function getRandomWord() {
-	var value = Math.floor(0 + Math.random() * (9 - 0));
-	return value;
-}
 
 const { readLogs } = require('./logs/logs-controller');
 const { Console } = require('console');
@@ -133,6 +114,10 @@ app.get('/logs', (req, res) => {
 	res.send(logs);
 });
 
+/**
+ * Peticion que actualiza continuamente la
+ * lista de tareas pendientes y la lista de pixeles
+ */
 app.post('/update', (req, res) => {
 	let aux = req.body.info.split(',');
 	listaTareasPendientes = [];
@@ -144,7 +129,6 @@ app.post('/update', (req, res) => {
 	listaPixeles = [];
 	aux2.forEach((element) => {
 		listaPixeles.push(element);
-		console.log(element + ' - ' + listaPixeles.length);
 	});
 });
 
