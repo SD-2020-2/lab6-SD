@@ -8,9 +8,9 @@ const archives = require('./archives/manageFiles'); //Manejo Archivos
 var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
-let listaPixeles = ['x:250,y:230,color:#fffff', 'x:20,y:30,color:#fffff'];
+let listaPixeles = ['x:250.y:230.color:#fffff', 'x:20.y:30.color:#fffff'];
 let listaCertificado = [];
-let listaVotos = [0, 0, 0];
+let listaVotos = [];
 var serverReq;
 let listaTareasPendientes = [];
 var isTime = false;
@@ -97,6 +97,7 @@ app.post('/wordV', (req, res) => {
 			.catch((error) => {
 				console.log(error);
 			});
+		count = 0;
 	}
 	res.sendStatus(200);
 });
@@ -111,46 +112,67 @@ app.get('/file', (req, res) => {
 	res.sendStatus(200);
 });
 
+function getTime(word) {
+	var count = 0;
+	listaVotos.forEach((element) => {
+		if (element == word) {
+			count = count + 1;
+		}
+	});
+	return count;
+}
+
 /**
  * Envia la prueba de trabajo a la instancia
  * que solicito la votacion
  * Se hace una peticion de la cual se espera un archivo
  */
 app.get('/task', (req, res) => {
-	var indices = [];
-	var element;
+	let counts = [];
+	counts.push(getTime('Amazona'));
+	counts.push(getTime('Progenitor'));
+	counts.push(getTime('Cohete'));
 	var mayor = 0;
-	var word;
-	for (let i = 0; i < listaVotos.length; i++) {
-		element = listaVotos[i];
-		var idx = listaVotos.indexOf(element);
-		while (idx != -1) {
-			indices.push(idx);
-			idx = listaVotos.indexOf(element, idx + 1);
+	for (let i = 0; i < counts.length; i++) {
+		if (counts[i] > mayor) {
+			mayor = i;
 		}
-		if (indices.length > mayor) {
-			mayor = indices.length;
-			word = element;
-		} else if (indices.length == mayor) {
-			console.log('Tienen la misma cantidad de votos');
+		if (counts[i] == mayor && mayor != 0) {
+			mayor = 5;
 		}
 	}
-	var miObjeto = new Object();
-	miObjeto.word = word;
-	miObjeto.veces = 5000;
-	listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
-	console.log('La palabra que mas votos tuvo fue ' + miObjeto.word);
-	axios
-		.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
-		.then((response) => {
-			fs.writeFileSync('prueba.txt', response.data);
-			archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
-			archives.enviarPruebaATodosLosServidores(listaServidores);
-		})
-		.catch((error) => {
-			console.log(error);
-		});
-	res.sendStatus(200);
+	listaVotos = [];
+	var word;
+	if (mayor == 0) {
+		word = 'Amazonas';
+	} else if (mayor == 1) {
+		word = 'Progenitor';
+	} else if (mayor == 2) {
+		word = 'Cohete';
+	} else if (mayor == 5) {
+		word = 'X';
+	}
+	if (word != 'X') {
+		var miObjeto = new Object();
+		miObjeto.word = word;
+		miObjeto.veces = 5000;
+		listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
+		console.log('La palabra que mas votos tuvo fue ' + miObjeto.word);
+		axios
+			.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
+			.then((response) => {
+				fs.writeFileSync('prueba.txt', response.data);
+				archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
+				archives.enviarPruebaATodosLosServidores(listaServidores);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		res.sendStatus(200);
+	} else {
+		logger.info('No hubo votacion, quedaron en empate.Volver a intentar');
+		res.send('Se debe pedir de nuevo votacion');
+	}
 });
 
 //Enviar el archivo recivido a todas las instancias
