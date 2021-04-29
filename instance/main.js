@@ -18,6 +18,7 @@ var veces = 0;
 let listaPalabras = ['Amazona', 'Progenitor', 'Cohete', 'Verdadero', 'Lata', 'Apilar', 'Dinero', 'Vecina', 'Documentos', 'Circuitos'];
 let listaTareasPendientes = [];
 let listPalabrasVote = [];
+let toPaint = [];
 let listaPixeles = [];
 
 var multer = require('multer');
