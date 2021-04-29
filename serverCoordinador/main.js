@@ -8,8 +8,8 @@ const archives = require('./archives/manageFiles'); //Manejo Archivos
 var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
-let listaPixeles = ["x:250,y:230,color:#fffff","x:20,y:30,color:#fffff"];
-let istaCertificado =[];
+let listaPixeles = ['x:250,y:230,color:#fffff', 'x:20,y:30,color:#fffff'];
+let istaCertificado = [];
 let listaVotos = [0, 0, 0];
 var serverReq;
 let listaTareasPendientes = [];
@@ -84,20 +84,9 @@ app.post('/infopixels', async (req, res) => {
 });
 
 app.post('/wordV', (req, res) => {
-	var pos = req.body.num;
-	console.log('EL voto es para la pos ' + pos);
-	if (pos == 0) {
-		listaVotos[0] = listaVotos[0] + 1;
-		console.log('Asi quedo el voto en la 0 ' + listaVotos[0]);
-	}
-	if (pos == 1) {
-		listaVotos[1] = listaVotos[1] + 1;
-		console.log('Asi quedo el voto en la 1 ' + listaVotos[1]);
-	}
-	if (pos == 2) {
-		listaVotos[2] = listaVotos[2] + 1;
-		console.log('Asi quedo el voto en la 2 ' + listaVotos[2]);
-	}
+	var word = req.body.word;
+	console.log('me llega: ' + word);
+	listaVotos.push(word);
 	count = count + 1;
 	if (count >= 2) {
 		axios
@@ -126,21 +115,27 @@ app.get('/file', (req, res) => {
  * Se hace una peticion de la cual se espera un archivo
  */
 app.get('/task', (req, res) => {
-	var aux = 0;
-	var pos = 0;
+	var indices = [];
+	var element;
+	var mayor = 0;
+	var word;
 	for (let i = 0; i < listaVotos.length; i++) {
-		if (aux < listaVotos[i]) {
-			aux = listaVotos[i];
-			pos = i;
+		element = listaVotos[i];
+		var idx = listaVotos.indexOf(element);
+		while (idx != -1) {
+			indices.push(idx);
+			idx = listaVotos.indexOf(element, idx + 1);
+		}
+		if (indices.length > mayor) {
+			mayor = indices.length;
+			word = element;
 		}
 	}
-	var word = listaPalabras[pos];
-
 	var miObjeto = new Object();
 	miObjeto.word = word;
 	miObjeto.veces = 5000;
 	listaTareasPendientes.push(serverReq + ':' + word + ':' + 5000);
-	console.log('La palabra que mas votos tuvo fue ' + miObjeto.word + ' en la pos ' + aux);
+	console.log('La palabra que mas votos tuvo fue ' + miObjeto.word);
 	axios
 		.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
 		.then((response) => {
@@ -171,12 +166,19 @@ setTimeout(() => {
 		});
 }, 5000);
 
-//setInterval(() => {
-//	for (let i = 0; i < listaTareasPendientes.length; i++) {
-//		console.log(listaTareasPendientes[i]);
-//		console.log(listaPalabras[i]);
-//	}
-//}, 5000);
+app.get('/update', (req, res) => {
+	var miObjeto = new Object();
+	miObjeto.info = listaTareasPendientes.toString();
+	for (let i = 0; i < listaServidores.length; i++) {
+		axios
+			.post(`http://${listaServidores[i]}:8080/update`, miObjeto)
+			.then((response) => {})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
+	res.sendStatus(200);
+});
 
 //Metodo encargado de mostrar la lista
 function showList() {

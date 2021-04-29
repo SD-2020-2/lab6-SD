@@ -11,7 +11,7 @@
 
 <body>
 
-    <form>
+    <form action="/wordV" method="POST">
         <label class="titulo" for="cars">Seleccione palabra:</label>
         <select class="select" name="cars" id="cars">
             <option value="ama">Amazona</option>
@@ -20,9 +20,9 @@
 
         </select>
         <br><br>
-        <!-- <input class="btn_cambiarHora" type="submit" value="Enviar voto"> -->
-        <div id="buttons">
-            <button id="btn-cambiarHora" class="btn_cambiarHora" v-on:click="createVoto()">Cambiar hora</button>
+        <input class="btn_cambiarHora" type="submit" value="Enviar voto">
+        <!--<div id="buttons">
+            <button id="btn-cambiarHora" class="btn_cambiarHora" v-on:click="createVoto()">Votar</button>-->
         </div>
         </div>
     </form>
@@ -62,7 +62,6 @@
     </div>
     <script src="communication.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-
     <script src="pixel-art.js"></script>
 
 </body>
