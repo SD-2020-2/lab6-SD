@@ -71,11 +71,12 @@ app.post('/pixel', (req, res) => {
  */
 app.post('/wordV', (req, res) => {
 	var miObjeto = new Object();
-	if (req.body.cars === 'ama') {
+	console.log(req.body.cars);
+	if (req.body.cars === 'ama' || req.body.cars === 'Amazona') {
 		miObjeto.word = 'Amazona';
-	} else if (req.body.cars === 'pro') {
+	} else if (req.body.cars === 'pro' || req.body.cars === 'Progenitor') {
 		miObjeto.word = 'Progenitor';
-	} else if (req.body.cars === 'coh') {
+	} else if (req.body.cars === 'coh' || req.body.cars === 'Cohete') {
 		miObjeto.word = 'Cohete';
 	}
 
@@ -118,8 +119,6 @@ app.post('/yourTask', (req, res) => {
  * n veces como lo indique (req.body.veces))
  */
 app.post('/task', (req, res) => {
-	console.log(req.body);
-	console.log(req);
 	var info = archives.escribirArchivo(req.body.word, req.body.veces);
 	//var info = archives.escribirArchivo('Funciona', 500);
 	console.log('El archivo fue ' + info);

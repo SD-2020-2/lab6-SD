@@ -131,6 +131,8 @@ app.get('/task', (req, res) => {
 		if (indices.length > mayor) {
 			mayor = indices.length;
 			word = element;
+		} else if (indices.length == mayor) {
+			console.log('Tienen la misma cantidad de votos');
 		}
 	}
 	var miObjeto = new Object();
@@ -141,7 +143,6 @@ app.get('/task', (req, res) => {
 	axios
 		.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
 		.then((response) => {
-			console.log(response.data);
 			fs.writeFileSync('prueba.txt', response.data);
 			archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
 			archives.enviarPruebaATodosLosServidores(listaServidores);
