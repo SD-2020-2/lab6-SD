@@ -1,4 +1,3 @@
-getListTask();
 const date = document.querySelector("#cars");
 
 function createVoto() {
@@ -35,7 +34,7 @@ var task = new Vue({
   },
 });
 
-function getListTask() {
+setInterval(() => {
   fetch("/listask")
     .then((response) => response.json())
     .then((obj) => {
@@ -43,4 +42,4 @@ function getListTask() {
       console.log(obj);
     })
     .catch((error) => console.log(error));
-}
+}, 5000);
