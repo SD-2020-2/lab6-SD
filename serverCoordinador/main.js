@@ -4,10 +4,12 @@ const axios = require('axios');
 const port = 3000;
 const bodyParser = require('body-parser');
 const logger = require('./logs/logger');
-const archives = require('./archives/manageFiles');//Manejo Archivos
+const archives = require('./archives/manageFiles'); //Manejo Archivos
 var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
+let listaPixeles = ["x:250,y:230,color:#fffff","x:20,y:30,color:#fffff"];
+let istaCertificado =[];
 let listaVotos = [0, 0, 0];
 var serverReq;
 let listaTareasPendientes = [];
@@ -31,8 +33,6 @@ app.get('/word', (req, res) => {
 	}
 	res.sendStatus(200);
 });
-
-
 
 app.get('/list', (req, res) => {
 	var miObjeto = new Object();
@@ -144,19 +144,19 @@ app.get('/task', (req, res) => {
 	axios
 		.post(`http://${serverReq}:8080/task`, miObjeto) // => Envia tarea a la instancia
 		.then((response) => {
+			console.log(response.data);
 			fs.writeFileSync('prueba.txt', response.data);
+			archives.enviarListaTareas(listaServidores, miObjeto.word, 5000);
+			archives.enviarPruebaATodosLosServidores(listaServidores);
 		})
 		.catch((error) => {
 			console.log(error);
 		});
 	res.sendStatus(200);
-	archives.enviarListaTareas(listaServidores , miObjeto.word , 5000);
-	archives.enviarPruebaATodosLosServidores(listaServidores);
 });
 
 //Enviar el archivo recivido a todas las instancias
 //Las cuales deben responder con un OK
- 
 
 setTimeout(() => {
 	axios

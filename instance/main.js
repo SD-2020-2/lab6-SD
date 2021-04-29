@@ -49,7 +49,7 @@ app.post("/validarPrueba", upload.single("file"), function (req, res, next) {
   let creoArchivo = archives.leerPrueba(req, res);
   let validoArchivo = archives.pruebaCarga(palabra, veces);
   if (creoArchivo && validoArchivo) {
-    res.send("" + Math.round(Math.random() * (50 - 1) + 1));
+    res.send("" + Math.round(Math.random() * (100 - 1) + 1));
   } else {
     res.send("-1");
   }
@@ -72,12 +72,12 @@ app.post("/pixel", (req, res) => {
   miObjeto.ip = ownIP;
   console.log(miObjeto.x);
   console.log(miObjeto.y);
-  axios.post(`http://192.168.0.12:3000/infopixels`, miObjeto);
+  axios.post(`http://192.168.0.8:3000/infopixels`, miObjeto);
   res.sendStatus(200);
 });
 
 /**
- *
+ * Para votar
  */
 app.get("/wordV", (req, res) => {
   var numAlea = Math.floor(0 + Math.random() * (2 - 0));
@@ -86,7 +86,7 @@ app.get("/wordV", (req, res) => {
   console.log(req.body.cars);
   console.log("Votare por la palabra en la pos" + numAlea);
   //IP DEL COMPUTADOR
-  axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);
+  axios.post(`http://192.168.0.8:3000/wordV`, miObjeto);
   res.sendStatus(200);
 });
 
