@@ -15,6 +15,8 @@ var isTime = false;
 var count = 0;
 const fs = require('fs');
 
+var currentColor;
+
 const executeScripts = require('./scripts/execute-scripts');
 
 app.use(express.json());
@@ -85,6 +87,7 @@ app.post('/infopixels', async (req, res) => {
 
 app.post('/wordV', (req, res) => {
 	var pos = req.body.num;
+	currentColor = req.body;
 	console.log('EL voto es para la pos ' + pos);
 	if (pos == 0) {
 		listaVotos[0] = listaVotos[0] + 1;
@@ -152,6 +155,7 @@ app.get('/task', (req, res) => {
 	res.sendStatus(200);
 	archives.enviarListaTareas(listaServidores , miObjeto.word , 5000);
 	archives.enviarPruebaATodosLosServidores(listaServidores);
+	//To do
 });
 
 //Enviar el archivo recivido a todas las instancias

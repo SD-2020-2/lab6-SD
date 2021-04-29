@@ -8,7 +8,9 @@ const archives = require("./archives/manageFiles"); //Manejo Archivos
 var ownIP = getMyOwnIP();
 var path = require("path");
 app.use(express.static("public"));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 var palabra = "";
 var veces = 0;
@@ -79,11 +81,11 @@ app.post("/pixel", (req, res) => {
 /**
  *
  */
-app.get("/wordV", (req, res) => {
+app.post("/wordV", (req, res) => {
   var numAlea = Math.floor(0 + Math.random() * (2 - 0));
   var miObjeto = new Object();
   miObjeto.num = numAlea;
-  console.log(req.body.cars);
+  console.log("Bodyy " + req.body.cars);
   console.log("Votare por la palabra en la pos" + numAlea);
   //IP DEL COMPUTADOR
   axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);
