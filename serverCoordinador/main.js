@@ -17,6 +17,8 @@ var isTime = false;
 var count = 0;
 const fs = require('fs');
 
+var currentColor;
+
 const executeScripts = require('./scripts/execute-scripts');
 
 app.use(express.json());

@@ -121,3 +121,17 @@ exports.enviarListaTareas = function(listaServidores , palabra , veces){
 		i++;
 	});
 }
+
+exports.enviarObjeto = function(currentColor , listaServidores){
+	console.log("se supone que envio: " + palabra + " veces " + veces);
+	let i = 1;
+	listaServidores.forEach(function(elemento) {
+		console.log("Enviando tarea a : " + elemento);
+		axios
+			.post(`http://${elemento}:8080/yourTask`, miObjeto)
+			.then((response) => {})
+			.catch((error) => {
+				console.log(error);
+		});
+	});
+}
