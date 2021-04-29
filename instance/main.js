@@ -29,6 +29,7 @@ let listaPalabras = [
 ];
 let listaTareasPendientes = [];
 let listPalabrasVote = [];
+let listaPixeles = [];
 
 var multer = require("multer");
 
@@ -157,9 +158,12 @@ app.post("/update", (req, res) => {
   listaTareasPendientes = [];
   aux.forEach((element) => {
     listaTareasPendientes.push(element);
-    console.log(
-      listaTareasPendientes[0] + "tamanio" + listaTareasPendientes.length
-    );
+  });
+
+  let aux2 = req.body.pixels.split(",");
+  listaPixeles = [];
+  aux2.forEach((element) => {
+    listaPixeles.push(element);
   });
 });
 

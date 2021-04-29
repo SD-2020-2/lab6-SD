@@ -128,7 +128,7 @@ exports.enviarObjeto = function(currentColor , listaServidores){
 	listaServidores.forEach(function(elemento) {
 		console.log("Enviando tarea a : " + elemento);
 		axios
-			.post(`http://${elemento}:8080/yourTask`, miObjeto)
+			.post(`http://${elemento}:8080/pushColor`, currentColor)
 			.then((response) => {})
 			.catch((error) => {
 				console.log(error);
