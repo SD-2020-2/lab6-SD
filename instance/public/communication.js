@@ -19,41 +19,10 @@ select.addEventListener("click", () => {
 
 getListWord();
 
-// obtiene la lista de palabras
-function getListWord() {
-  fetch("/word")
-    .then((response) => response.json())
-    .then((obj) => {
-      words.wordList = obj;
-      console.log(obj);
-    })
-    .catch((error) => console.log(error));
-}
-
-var words = new Vue({
-  el: "#opciones",
-  data() {
-    return {
-      wordList: [
-        "Amazona",
-        "Progenitor",
-        "Cohete",
-        "Verdadero",
-        "Lata",
-        "Apilar",
-        "Dinero",
-        "Vecina",
-        "Documentos",
-        "Circuitos",
-      ],
-    };
-  },
-});
-
 let wordInfo = { name: date.value };
 console.log(wordInfo);
 let options = {
-  method: "get",
+  method: "POST",
   headers: { "Content-type": "application/json" },
   body: JSON.stringify(wordInfo),
 };
@@ -65,16 +34,25 @@ function createVoto() {
   alert("voto enviado ...");
 }
 
-// obtiene la lista de tareas pendientes
-function getListTask() {
-  fetch("/word")
+// obtiene la lista de palabras
+function getListWord() {
+  fetch("/listword")
     .then((response) => response.json())
     .then((obj) => {
-      tasks.taskList = obj;
+      words.wordList = obj;
       console.log(obj);
     })
     .catch((error) => console.log(error));
 }
+
+var words = new Vue({
+  el: "#cars",
+  data() {
+    return {
+      wordList: [],
+    };
+  },
+});
 
 var tasks = new Vue({
   el: "#tareasPendienteinfo",

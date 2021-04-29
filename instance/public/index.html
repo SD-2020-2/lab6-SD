@@ -13,18 +13,12 @@
 
     <form action="/wordV" method="GET">
         <label class="titulo" for="cars">Seleccione palabra:</label>
-        <select class="select" name="cars" id="cars">
-            <option value="ama">Amazona</option>
-            <option value="pro">Progenitor</option>
-            <option value="cohe">Cohete</option>
-            <option value="ve">Verdadero</option>
-            <option value="la">Lata</option>
-            <option value="api">Apilar</option>
-            <option value="dine">Dinero</option>
-            <option value="veci">Vecina</option>
-            <option value="docu">Documentos</option>
-            <option value="Circuitos">Circuitos</option>
-        </select>
+        <div id="cars">
+            <select class="select" name="cars" v-for="server,index in wordList">
+                <option value="ama">{{server}}</option>
+            </select>
+        </div>
+
         <br><br>
         <input class="btn_cambiarHora" type="submit" value="Enviar voto">
     </form>
