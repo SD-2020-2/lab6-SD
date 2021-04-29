@@ -68,9 +68,9 @@ app.post('/pixel', (req, res) => {
  */
 app.post('/wordV', (req, res) => {
 	var miObjeto = new Object();
-	//console.log(req.body.name);
+	console.log(req.body.name);
 	console.log(req);
-	//console.log(req.body.cars);
+	console.log(req.body.cars);
 	miObjeto.word = req.body.name;
 	console.log('Votare por la palabra en la pos' + miObjeto.word);
 	//IP DEL COMPUTADOR
@@ -135,11 +135,11 @@ app.get('/logs', (req, res) => {
 });
 
 app.post('/update', (req, res) => {
-	console.log(req.body.info);
 	let aux = req.body.info.split(',');
+	listaTareasPendientes = [];
 	aux.forEach((element) => {
 		listaTareasPendientes.push(element);
-		console.log(listaTareasPendientes[0]);
+		console.log(listaTareasPendientes[0] + 'tamanio' + listaTareasPendientes.length);
 	});
 });
 

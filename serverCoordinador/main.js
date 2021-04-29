@@ -166,7 +166,7 @@ setTimeout(() => {
 		});
 }, 5000);
 
-app.get('/update', (req, res) => {
+setInterval(() => {
 	var miObjeto = new Object();
 	miObjeto.info = listaTareasPendientes.toString();
 	for (let i = 0; i < listaServidores.length; i++) {
@@ -177,8 +177,7 @@ app.get('/update', (req, res) => {
 				console.log(error);
 			});
 	}
-	res.sendStatus(200);
-});
+}, 5000);
 
 //Metodo encargado de mostrar la lista
 function showList() {
