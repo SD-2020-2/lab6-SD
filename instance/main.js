@@ -83,7 +83,7 @@ app.get("/wordV", (req, res) => {
   var numAlea = Math.floor(0 + Math.random() * (2 - 0));
   var miObjeto = new Object();
   miObjeto.num = numAlea;
-  Console.log(req.body.cars);
+  console.log(req.body.cars);
   console.log("Votare por la palabra en la pos" + numAlea);
   //IP DEL COMPUTADOR
   axios.post(`http://192.168.0.12:3000/wordV`, miObjeto);

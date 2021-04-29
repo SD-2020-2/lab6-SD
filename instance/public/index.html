@@ -47,13 +47,16 @@
 
             <table id="tareasPendienteinfo">
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Veces</th>
+                    <th scope="col">Quien lo realiza</th>
+                    <th scope="col">Tarea</th>
+                    <th scope="col">Pixel</th>
+
 
                 </tr>
 
                 <tr v-for="server,index in tareasPendienteinfo">
                     <td>{{server.name}}</td>
+                    <td>{{server.status}}</td>
                     <td>{{server.status}}</td>
                 </tr>
             </table>
