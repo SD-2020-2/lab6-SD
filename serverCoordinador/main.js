@@ -9,7 +9,7 @@ var server = require('http').Server(app);
 let listaServidores = [];
 let listaPalabras = [];
 let listaPixeles = ['x:250,y:230,color:#fffff', 'x:20,y:30,color:#fffff'];
-let istaCertificado = [];
+let listaCertificado = [];
 let listaVotos = [0, 0, 0];
 var serverReq;
 let listaTareasPendientes = [];
@@ -171,6 +171,7 @@ setTimeout(() => {
 setInterval(() => {
 	var miObjeto = new Object();
 	miObjeto.info = listaTareasPendientes.toString();
+	miObjeto.pixels = listaPixeles.toString();
 	for (let i = 0; i < listaServidores.length; i++) {
 		axios
 			.post(`http://${listaServidores[i]}:8080/update`, miObjeto)
