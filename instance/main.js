@@ -99,6 +99,13 @@ app.post("/listword", (req, res) => {
   listPalabrasVote.push(req.body.word2);
   res.sendStatus(200);
 });
+app.get("/listword", (req, res) => {
+  try {
+    res.send(JSON.stringify(listPalabrasVote));
+  } catch (error) {
+    res.send(JSON.stringify([]));
+  }
+});
 
 /**
  * Se recibe una palabra y la cantidad de veces que haya que escribirla

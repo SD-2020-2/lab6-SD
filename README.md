@@ -1,4 +1,5 @@
-# Laboratorio 5 - Sistemas Distribuidos
+# Pixel Art Colaborativo
+## Laboratorio 6 - Sistemas Distribuidos
 
 ## Contenido
 
@@ -9,12 +10,12 @@
   - [Networking del proyecto](#network-proyecto)
 - [Dependencias](#dependencias)
   - [Instancia](#dependencias-instancia)
-  - [Middleware](#dependencias-middleware)
+  - [Server Coordinador](#dependencias-server-coordinador)
 - [Desarrolladores](#desarrolladores)
 
 ## Arquitectura
 
-Arquitectura
+Arquitectura: 3 instancias - 1 server coordinador
 
 ## Enunciado
 
@@ -24,13 +25,13 @@ Arquitectura
 
 3. Para modificar la obra de arte se tiene que tener la mitad más uno de los votos de la red, para eso se hace un PoW.
 
-A. Se solicita a las instancias una palabra (de una lista).
+    3.1. Se solicita a las instancias una palabra (de una lista).
 
-B. Se reunen las palabras y se escoge la que más tenga votos (si hay empate o no hay consenso se vuelve a preguntar).
+    3.2. Se reunen las palabras y se escoge la que más tenga votos (si hay empate o no hay consenso se vuelve a preguntar).
 
-C. Se registra en tareas pendientes(todos tiene copia de esa lista) quien va a hacer la tarea y cual es la tarea(escribir la palabra en un archivo 100000 veces en nuevas lineas) y el pixel que se quiere modificar y el color.
+    3.3. Se registra en tareas pendientes(todos tiene copia de esa lista) quien va a hacer la tarea y cual es la tarea(escribir la palabra en un archivo 100000       veces en nuevas lineas) y el pixel que se quiere modificar y el color.
 
-D. Cuando se cumple el trabajo se tiene que enviar a todos los nodos y estos validan que se haya hecho correctamente. Y si la mitad más uno aprueba entonces se registra el pixel(con un codigo que sea la suma de numeros aletaroios de 0 a 100 generados por cada participante). Cada participante guarda esos numeros.
+    3.4. Cuando se cumple el trabajo se tiene que enviar a todos los nodos y estos validan que se haya hecho correctamente. Y si la mitad más uno aprueba entonces    se registra el pixel(con un codigo que sea la suma de numeros aletaroios de 0 a 100 generados por cada participante). Cada participante guarda esos numeros.
 
 4. Se puede validar la obra de arte, pedir un certificado a la instancia y la envian al nodo lider y el hace un consenso para verificar si la imagen es real.
 
@@ -40,23 +41,35 @@ El uso de este proyecto se explica a continuación:
 
 ### Construir el proyecto
 
-Instala las dependencias del middleware, ubicandote en la carpeta middleware
+1. Clona el proyecto
+```
+git clone https://github.com/SD-2020-2/lab6-SD.git
+```
+2. Desde una terminal ve a la raiz del proyecto
 
+3. [Detener](stop-instances.sh) todas las instancias y recrear la imagen de docker
+```
+bash stop-instances.sh
+```
+4. Crea 3 instancias corriendo el bash [create-instance.sh](create-instance.sh) 3 veces
+```
+bash create-instance.sh
+```
+5. Ubicate en la carpeta /serverCoordinador
+
+6. Instala las dependencias del server coordinador
 ```
 npm install
 ```
-
-Inicia el middleware
-
+7. Inicia el server coordinador
 ```
-node index.js
+node main.js
 ```
-
-Ve a localhost:3000 para ver el sitio web del middleware
-
+8. Ve a http://127.0.0.1:3000 para ver el sitio web del server coordinador
 ```
-http://localhost:3000
+http://127.0.0.1:3000
 ```
+9. Dibuja y vota
 
 ### Network proyecto
 
@@ -70,7 +83,7 @@ Se crea un contenedor por cada instancia, por ejemplo:
 Y el servidor coordinador funciona en la propia maquina:
 
 - serverCoordinador:
-  - http://127.0.0.1:8080
+  - http://127.0.0.1:3000
 
 ## Dependencias
 
@@ -80,15 +93,19 @@ Detalle de las dependencias del proyecto:
 
 ```
 "axios": "^0.21.1",
-"body-parser": "^1.19.0",
-"express": "^4.17.1"
+"express": "^4.17.1",
+"multer": "^1.4.2",
+"path": "^0.12.7",
+"winston": "^3.3.3"
 ```
 
-### Dependencias middleware
+### Dependencias server coordinador
 
 ```
 "axios": "^0.21.1",
-"express": "^4.17.1
+"body-parser": "^1.19.0",
+"express": "^4.17.1",
+"winston": "^3.3.3"
 ```
 
 ## Desarrolladores
