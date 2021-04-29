@@ -28,7 +28,7 @@ let options = {
 };
 function createVoto() {
   console.log(options);
-  fetch("/listword", options)
+  fetch("/wordV", options)
     .then((response) => response.json())
     .then((data) => console.log(data));
   alert("voto enviado ...");
