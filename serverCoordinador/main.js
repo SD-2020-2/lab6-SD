@@ -11,8 +11,7 @@ const fs = require('fs');
 var server = require('http').Server(app);
 let listaServidores = [];
 let listaPixeles = [];
-//'x:250.y:230.color:#fffff', 'x:20.y:30.color:#fffff'
-let listaCertificado = [];
+let listCertificado = [];
 let listaVotos = [];
 var serverReq;
 let listaTareasPendientes = [];
@@ -161,11 +160,22 @@ app.get('/task', (req, res) => {
  */
 function isValidated() {
 	if (archives.isValidated()) {
-		console.log('Subiendo a la lista');
-		console.log('x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
+		logger.info.log('Pixel a modificar: x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
 		listaPixeles.push('x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
 	}
-	console.log(archives.sendlistVerify);
+	let list = archives.sendlistVerify();
+	var code = '';
+	for (let i = 0; i < list.length; i++) {
+		if (i + 1 == list.length) {
+			code += list[i];
+		} else {
+			code += list[i] + '-';
+		}
+	}
+	listCertificado.push(code);
+	logger.log('Codigo lista: ' + listCertificado[0]);
+	showListCertificate();
+	sendListCertificate();
 }
 
 //Enviar el archivo recivido a todas las instancias
@@ -214,6 +224,66 @@ function showList() {
 		console.log(listaServidores[i]);
 	}
 }
+
+//Metodo encargado de mostrar la lista de certificacion
+function showListCertificate() {
+	console.log('Lista de Certificado: ');
+	for (let i = 0; i < listCertificado.length; i++) {
+		console.log(listCertificado[i]);
+	}
+}
+
+//Metodo encargado de actualizar la lista de certificacion
+//a todas las instancias
+function sendListCertificate() {
+	var miObjeto = new Object();
+	miObjeto.info = listCertificado.toString();
+	for (let i = 0; i < listaServidores.length; i++) {
+		axios
+			.post(`http://${listaServidores[i]}:8080/listVerificacion`, miObjeto)
+			.then((response) => {})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
+}
+
+/**
+ * Crea un archivo que contiene
+ * los codigos de los pxeles para su certificacion
+ */
+app.post('/fileCert', (req, res) => {
+	var info = req.body.info;
+	fs.writeFileSync('certificado.txt', info);
+	axios.get(`http://localhost:3000/consensoCertificado`);
+	res.sendStatus(200);
+});
+
+/**
+ * Envia el archivo a todas las instancias para que validen
+ * el archivo
+ */
+app.get('/consensoCertificado', (req, res) => {
+	var array = fs.readFileSync('certificado.txt').toString().split(',');
+	var miObjeto = new Object();
+	miObjeto.info = array.toString();
+	var count = 0;
+	for (let i = 0; i < listaServidores.length; i++) {
+		axios
+			.post(`http://${listaServidores[i]}:8080/validate`, miObjeto)
+			.then((response) => {
+				if (response.data === 'Apruebo') {
+					count = count + 1;
+					logger.info('La instancia ' + listaServidores[i] + ' aprobo la obra');
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	}
+
+	res.sendStatus(200);
+});
 
 /**
  * Obtiene los logs la instancia especificada en instancenum (2,3,4)

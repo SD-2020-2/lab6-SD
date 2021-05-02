@@ -18,9 +18,8 @@ var veces = 0;
 
 let listaPalabras = ['Amazona', 'Progenitor', 'Cohete'];
 let listaTareasPendientes = [];
-let listPalabrasVote = [];
-let toPaint = [];
 let listaPixeles = [];
+let listaCertificado = [];
 
 var multer = require('multer');
 
@@ -62,15 +61,12 @@ app.get('/listPixels', (req, res) => {
 	axios
 		.get(`http://192.168.0.8:3000/listpixels`)
 		.then((response) => {
-			console.log(response.data);
 			let aux = response.data.split(',');
 			listaPixeles = [];
 			aux.forEach((element) => {
 				listaPixeles.push(element);
 			});
 			miObjeto.info = listaPixeles.toString();
-			console.log(listaPixeles.length);
-			console.log('Envia => ' + miObjeto.info);
 			res.send(JSON.stringify(miObjeto.info));
 		})
 		.catch((error) => {
@@ -96,7 +92,6 @@ app.post('/pixel', (req, res) => {
  */
 app.post('/wordV', (req, res) => {
 	var miObjeto = new Object();
-	console.log(req.body.cars);
 	if (req.body.cars === 'ama' || req.body.cars === 'Amazona') {
 		miObjeto.word = 'Amazona';
 	} else if (req.body.cars === 'pro' || req.body.cars === 'Progenitor') {
@@ -154,17 +149,68 @@ app.post('/update', (req, res) => {
 
 app.get('/listask', (req, res) => {
 	try {
-		showListTask();
 		res.send(JSON.stringify(listaTareasPendientes));
 	} catch (error) {
 		res.send(JSON.stringify([]));
 	}
 });
 
+/**
+ * Actualiza la lista de verificacion
+ */
+app.post('/listVerificacion', (req, res) => {
+	let aux = req.body.info.split(',');
+	listaCertificado = [];
+	aux.forEach((element) => {
+		listaCertificado.push(element);
+	});
+	showListCertified();
+});
+
+/**
+ * Solicitar el certificado al server Coordinador
+ */
+app.get('/certificado', (req, res) => {
+	var miObjeto = new Object();
+	miObjeto.info = listaCertificado.toString();
+	axios.post(`http://192.168.0.8:3000/fileCert`, miObjeto);
+	res.sendStatus(200);
+});
+
+/**
+ * Le llega la informacion de un certificado
+ * para validarlo con su propia lista
+ */
+app.post('/validate', (req, res) => {
+	let aux = req.body.info.split(',');
+	var count = 0;
+	for (let i = 0; i < listaCertificado.length; i++) {
+		if (aux[i] === listaCertificado[i]) {
+			count = count + 1;
+		}
+	}
+	if (aux.length == count) {
+		logger.info('Mi instancia ' + ownIP + ' aprueba el documento de certificado');
+		res.send('Apruebo');
+	} else {
+		logger.info('Mi instancia ' + ownIP + ' no aprueba el documento de certificado');
+		res.send('No Apruebo');
+	}
+});
+
 //Metodo encargado de mostrar la lista
 function showListTask() {
+	console.log('Lista de Tareas pendientes');
 	for (let i = 0; i < listaTareasPendientes.length; i++) {
 		console.log(listaTareasPendientes[i]);
+	}
+}
+
+//Metodo encargado de mostrar la lista de Certificado
+function showListCertified() {
+	console.log('Lista de certificado');
+	for (let i = 0; i < listaCertificado.length; i++) {
+		console.log(listaCertificado[i]);
 	}
 }
 app.listen(port, () => {

@@ -5,7 +5,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const { request } = require('http');
 
-var verifyCode = [];
+let verifyCode = [];
 
 /**
  * Verifica que una palabra se haya escrito una cantidad de
@@ -78,6 +78,7 @@ function enviarPruebaCarga(Puerto) {
 			response.setEncoding('utf8');
 			response.on('data', function (body) {
 				console.log('Codigo de ' + Puerto + ' es: ' + body);
+
 				verifyCode.push(body);
 			});
 		}
@@ -91,6 +92,7 @@ function enviarPruebaCarga(Puerto) {
  */
 exports.enviarPruebaATodosLosServidores = function (listaServidores) {
 	let i = 1;
+	verifyCode = [];
 	listaServidores.forEach(function (elemento) {
 		console.log('Enviando prueba para validar a: ' + elemento);
 		enviarPruebaCarga(8080 + i);
