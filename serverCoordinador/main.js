@@ -51,9 +51,7 @@ app.post('/wordV', (req, res) => {
 		axios
 			.get(`http://localhost:3000/task`)
 			.then((response) => {})
-			.catch((error) => {
-				console.log(error);
-			});
+			.catch((error) => {});
 		count = 0;
 	}
 	res.sendStatus(200);
@@ -149,8 +147,8 @@ app.get('/task', (req, res) => {
 			});
 		res.sendStatus(200);
 	} else {
-		logger.info('No hubo votacion, quedaron en empate.Volver a intentar');
-		res.sendStatus(400);
+		logger.info('No hubo votacion, quedaron en empate. Volver a intentar');
+		res.sendStatus(200);
 	}
 });
 
@@ -160,7 +158,7 @@ app.get('/task', (req, res) => {
  */
 function isValidated() {
 	if (archives.isValidated()) {
-		logger.info.log('Pixel a modificar: x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
+		logger.info('Pixel a modificar: x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
 		listaPixeles.push('x:' + currentColor.x + '|y:' + currentColor.y + '|color:' + currentColor.color);
 	}
 	let list = archives.sendlistVerify();
@@ -173,7 +171,7 @@ function isValidated() {
 		}
 	}
 	listCertificado.push(code);
-	logger.log('Codigo lista: ' + listCertificado[0]);
+	logger.info('Codigo lista: ' + listCertificado[0]);
 	showListCertificate();
 	sendListCertificate();
 }
